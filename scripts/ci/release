@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# TODO: setup changesets in github actions
+
+rm -rf ./dist 
+
+pnpm build
+
+pnpm publish \
+  --tag "latest"
+
