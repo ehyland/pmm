@@ -9,7 +9,7 @@ Just like corepack, plus
 🔥 &nbsp; Installs package managers from configurable registry with `PMM_PACKAGE_PATH`
 
 What's missing
-load
+
 ⏲️ &nbsp; No `yarn` support (coming soon, on request)
 
 ⏲️ &nbsp; No Windows support (will consider, on request)
