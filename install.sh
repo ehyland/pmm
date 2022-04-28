@@ -5,9 +5,11 @@ set -euo pipefail
 default_registry="https://registry.npmjs.org"
 registry="${PMM_NPM_REGISTRY:-$default_registry}"
 
-package_name="@ehyland/pmm"
+package_scope="@ehyland/"
+package_name="pmm"
+package_name_full="$package_scope$package_name"
 version=$(
-  curl -fsSL "${registry}/${package_name}/latest" \
+  curl -fsSL "${registry}/${package_name_full}/latest" \
   | node -e "process.stdin.setEncoding('utf8').on('data', (chunk) => console.log(JSON.parse(chunk).version) )"
 )
 
@@ -22,7 +24,7 @@ fi
 
 mkdir -p "$PMM_PACKAGE_PATH"
 
-curl -fsSL "${registry}/${package_name}/-/${package_name}-${version}.tgz" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
+curl -fsSL "${registry}/${package_name_full}/-/$package_name-${version}.tgz" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
 
 echo "Installed to $PMM_DIR"
 echo 'Add the following to your ~/.bashrc'
