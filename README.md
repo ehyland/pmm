@@ -14,7 +14,7 @@ What's missing
 
 ⏲️ &nbsp; No Windows support (will consider, on request)
 
-> ⚠️ &nbsp; This is early release. There's more feature to add, edges to resolve. But already a delight to use
+> ⚠️ &nbsp; This is early release. There are more feature to add, edges to smooth. But it's already a delight to use
 
 ## Install
 
