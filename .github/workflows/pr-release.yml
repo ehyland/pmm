@@ -1,0 +1,15 @@
+on:
+  pull_request:
+
+env:
+  GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+
+jobs:
+  pr-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/setup
+
+      - run: scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
