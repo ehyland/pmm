@@ -16,7 +16,7 @@ function handler(cb: sade.Handler): sade.Handler {
       await cb(...args);
     } catch (error) {
       console.error(error);
-      logger.info(`Dang, hit a snag`);
+      logger.userError(`Dang, hit a snag`);
       process.exit(1);
     }
   };
@@ -29,7 +29,9 @@ cli
       const search = await inspector.findPackageManagerSpec();
 
       if (!search) {
-        logger.info(`Unable to find package.json with "packageManager" field`);
+        logger.userError(
+          `Unable to find package.json with "packageManager" field`
+        );
         process.exit(0);
       }
 
@@ -57,12 +59,12 @@ cli
   .action(
     handler(async (packageManagerName: string, requestedVersion?: string) => {
       if (!isSupportedPackageManager(packageManagerName)) {
-        logger.info(`Sorry, "${packageManagerName}" is not yet supported`);
+        logger.userError(`Sorry, "${packageManagerName}" is not yet supported`);
         process.exit(1);
       }
 
       if (requestedVersion && !config.isValidVersionString(requestedVersion)) {
-        logger.info(`Invalid version "${requestedVersion}"`);
+        logger.userError(`Invalid version "${requestedVersion}"`);
         process.exit(1);
       }
 

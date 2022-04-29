@@ -9,6 +9,7 @@ specifiers:
   '@types/tar': ^6.1.1
   debug: ^4.3.4
   jest: ^27.5.1
+  kleur: ^4.1.4
   sade: ^1.8.1
   tar: ^6.1.11
   ts-jest: ^27.1.4
@@ -29,6 +30,7 @@ devDependencies:
   '@types/tar': 6.1.1
   debug: 4.3.4
   jest: 27.5.1
+  kleur: 4.1.4
   sade: 1.8.1
   tar: 6.1.11
   ts-jest: 27.1.4_9985e1834e803358b7be1e6ce5ca0eea
@@ -2338,6 +2340,11 @@ packages:
 
   /kleur/3.0.3:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
+    engines: {node: '>=6'}
+    dev: true
+
+  /kleur/4.1.4:
+    resolution: {integrity: sha512-8QADVssbrFjivHWQU7KkMgptGTl6WAcSdlbBPY4uNF+mWr6DGcKrvY2w4FQJoXch7+fKMjj0dRrL75vk3k23OA==}
     engines: {node: '>=6'}
     dev: true
 

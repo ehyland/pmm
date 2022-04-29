@@ -42,7 +42,7 @@ async function getDefaultFromFile(name: config.PackageManagerName) {
 }
 
 async function saveDefaultToFile({ name, version }: config.PackageManagerSpec) {
-  logger.info(`Setting ${name} default to version ${version}`);
+  logger.friendly(`Setting ${name} default to version ${version}`);
   await fs.mkdir(path.dirname(getDefaultFilePath(name)), { recursive: true });
   await fs.writeFile(getDefaultFilePath(name), version, 'utf8');
 }
