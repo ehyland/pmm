@@ -6,7 +6,7 @@ Just like corepack, plus
 
 🔥 &nbsp; `pmm update-default <package-manager> [version]` update the global fallback version
 
-🔥 &nbsp; Installs package managers from configurable registry with `PMM_PACKAGE_PATH`
+🔥 &nbsp; Installs package managers from configurable registry with `PMM_NPM_REGISTRY`
 
 What's missing
 
