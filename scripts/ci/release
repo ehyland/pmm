@@ -2,12 +2,13 @@
 
 set -euo pipefail
 
-# TODO: setup changesets in github actions
+# config
+PUBLISH_ARGS=""
+
+if [[ -n "$1" ]]; then
+  PUBLISH_ARGS+=" --tag=$1"
+fi
 
 pnpm build
 
-pnpm publish \
-  --tag "latest" \
-  --access "public"
-
-
+pnpm changeset publish $PUBLISH_ARGS

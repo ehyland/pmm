@@ -13,3 +13,5 @@ jobs:
       - uses: ./.github/actions/setup
 
       - run: scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
+
+      - run: scripts/ci/release "pr-${GITHUB_PR_NUMBER}"
