@@ -15,3 +15,5 @@ jobs:
       - run: scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
 
       - run: scripts/ci/release "pr-${GITHUB_PR_NUMBER}"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
