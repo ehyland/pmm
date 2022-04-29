@@ -11,4 +11,7 @@ fi
 
 pnpm build
 
-pnpm changeset publish $PUBLISH_ARGS
+pnpm changeset publish \
+  --registry="https://registry.npmjs.org/" \
+  --access="public" \
+  $PUBLISH_ARGS
