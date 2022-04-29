@@ -19,6 +19,9 @@
     "bin",
     "enable.sh"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
