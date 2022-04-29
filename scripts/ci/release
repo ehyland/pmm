@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# config
 PUBLISH_ARGS=""
 
 if [[ -n "$1" ]]; then
