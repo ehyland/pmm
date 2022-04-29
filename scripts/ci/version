@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# args
+SNAPSHOT="$1"
+
+# config
+VERSION_ARGS=""
+
+if [[ -n "$1" ]]; then
+  VERSION_ARGS+=" --snapshot=$1"
+fi
+
+pnpm build
+
+pnpm changeset version $VERSION_ARGS
+
+pnpm install --lockfile-only
+
+pnpm format:write
+
+
