@@ -1,5 +1,5 @@
-declare module '@npmcli/package-json' {
-  import type { PackageJson } from 'type-fest';
+declare module "@npmcli/package-json" {
+  import type { PackageJson } from "type-fest";
 
   export type Content = PackageJson & { packageManager?: string };
 
@@ -13,6 +13,6 @@ declare module '@npmcli/package-json' {
     content: Content;
   }
 
-  export type { PackageJson } from 'type-fest';
+  export type { PackageJson } from "type-fest";
   export default NPMCliPackageJson;
 }

@@ -1,14 +1,14 @@
-import sade from 'sade';
-import * as logger from './logger';
-import * as defaults from './defaults';
-import * as installer from './installer';
-import * as inspector from './inspector';
-import * as config from './config';
-import { getLatestVersion } from './installer';
-import { isSupportedPackageManager } from './config';
-import packageHelper from '@npmcli/package-json';
+import sade from "sade";
+import * as logger from "./logger";
+import * as defaults from "./defaults";
+import * as installer from "./installer";
+import * as inspector from "./inspector";
+import * as config from "./config";
+import { getLatestVersion } from "./installer";
+import { isSupportedPackageManager } from "./config";
+import packageHelper from "@npmcli/package-json";
 
-const cli = sade('pmm');
+const cli = sade("pmm");
 
 function handler(cb: sade.Handler): sade.Handler {
   return async (...args: any[]) => {
@@ -23,7 +23,7 @@ function handler(cb: sade.Handler): sade.Handler {
 }
 
 cli
-  .command('update-local', 'Update package manager version in package.json')
+  .command("update-local", "Update package manager version in package.json")
   .action(
     handler(async () => {
       const search = await inspector.findPackageManagerSpec();
@@ -53,8 +53,8 @@ cli
 
 cli
   .command(
-    'update-default <package-manager> [version]',
-    'Update the default package manager version'
+    "update-default <package-manager> [version]",
+    "Update the default package manager version"
   )
   .action(
     handler(async (packageManagerName: string, requestedVersion?: string) => {

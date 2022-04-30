@@ -1,9 +1,9 @@
-import debugLib from 'debug';
-import kleur from 'kleur';
+import debugLib from "debug";
+import kleur from "kleur";
 
 // debugLib.enable('*');
 
-const debugLogger = debugLib('pmm');
+const debugLogger = debugLib("pmm");
 
 export function friendly(message: string) {
   console.log(`🎁  ${message}`);

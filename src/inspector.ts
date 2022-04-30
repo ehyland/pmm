@@ -1,7 +1,7 @@
-import process from 'node:process';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import * as config from './config';
+import process from "node:process";
+import path from "node:path";
+import fs from "node:fs/promises";
+import * as config from "./config";
 
 export async function findPackageManagerSpec() {
   let current = process.cwd();
@@ -10,10 +10,10 @@ export async function findPackageManagerSpec() {
     const packageInfo = await getPackageInDir(current);
     const specString = packageInfo?.packageManager;
 
-    if (typeof specString === 'string') {
+    if (typeof specString === "string") {
       const spec = parseSpecString(specString);
       if (spec) {
-        return { packageJSONPath: path.resolve(current, 'package.json'), spec };
+        return { packageJSONPath: path.resolve(current, "package.json"), spec };
       }
     }
 
@@ -24,12 +24,12 @@ export async function findPackageManagerSpec() {
 async function getPackageInDir(dir: string) {
   try {
     const packageString = await fs.readFile(
-      path.resolve(dir, 'package.json'),
-      'utf8'
+      path.resolve(dir, "package.json"),
+      "utf8"
     );
     return JSON.parse(packageString);
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       return undefined;
     }
     throw error;
@@ -39,7 +39,7 @@ async function getPackageInDir(dir: string) {
 function parseSpecString(
   specString: string
 ): config.PackageManagerSpec | undefined {
-  const [packageManager, version] = specString.split('@');
+  const [packageManager, version] = specString.split("@");
 
   if (!config.isSupportedPackageManager(packageManager)) {
     return undefined;

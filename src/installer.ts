@@ -1,11 +1,11 @@
-import path from 'node:path';
-import stream from 'node:stream';
-import * as fs from 'node:fs';
-import * as nodeUtil from 'node:util';
-import { PackageJSON } from './registry/types/package-info';
-import * as logger from './logger';
-import * as config from './config';
-import * as http from './http';
+import path from "node:path";
+import stream from "node:stream";
+import * as fs from "node:fs";
+import * as nodeUtil from "node:util";
+import { PackageJSON } from "./registry/types/package-info";
+import * as logger from "./logger";
+import * as config from "./config";
+import * as http from "./http";
 
 interface InstallOptions {
   spec: config.PackageManagerSpec;
@@ -65,7 +65,7 @@ export async function install({
 
   await fs.promises.mkdir(installPath, { recursive: true });
 
-  const tar = await import('tar');
+  const tar = await import("tar");
 
   logger.debug(`Downloading archive`);
   await streamPipeline(response, tar.extract({ strip: 1, cwd: installPath }));

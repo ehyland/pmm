@@ -1,18 +1,18 @@
-import * as installer from './installer';
-import fs from 'node:fs/promises';
-import { PackageManagerSpec } from './config';
+import * as installer from "./installer";
+import fs from "node:fs/promises";
+import { PackageManagerSpec } from "./config";
 
 jest.setTimeout(10 * 10000);
 
 const versionMatcher = expect.stringMatching(/^\d+\.\d+\.\d+$/);
 
-describe('installer', () => {
-  describe('install', () => {
-    describe('pnpm', () => {
-      it('works', async () => {
+describe("installer", () => {
+  describe("install", () => {
+    describe("pnpm", () => {
+      it("works", async () => {
         const spec: PackageManagerSpec = {
-          name: 'pnpm',
-          version: '6.32.9',
+          name: "pnpm",
+          version: "6.32.9",
         };
         const installPath = installer.getInstallPath(spec);
 
@@ -40,11 +40,11 @@ describe('installer', () => {
         expect(result3.usedCache).toBe(false);
       });
     });
-    describe('npm', () => {
-      it('works', async () => {
+    describe("npm", () => {
+      it("works", async () => {
         const spec: PackageManagerSpec = {
-          name: 'npm',
-          version: '8.0.0',
+          name: "npm",
+          version: "8.0.0",
         };
         const installPath = installer.getInstallPath(spec);
 
@@ -74,9 +74,9 @@ describe('installer', () => {
     });
   });
 
-  describe('getLatestVersion()', () => {
-    it('works for pnpm', async () => {
-      const result1 = await installer.getLatestVersion('pnpm');
+  describe("getLatestVersion()", () => {
+    it("works for pnpm", async () => {
+      const result1 = await installer.getLatestVersion("pnpm");
 
       expect(result1).toEqual({
         version: versionMatcher,
