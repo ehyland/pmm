@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/setup
+
+      - run: pnpm build
+
+      - name: Release / Create Version PR
+        id: changesets
+        uses: changesets/action@v1.2.2
+        with:
+          version: scripts/ci/version
+          publish: scripts/ci/publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

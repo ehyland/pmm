@@ -52,7 +52,7 @@ export async function install({
     return { installPath, usedCache: true };
   }
 
-  logger.info(`Installing ${spec.name}@${spec.version}`);
+  logger.friendly(`Installing ${spec.name}@${spec.version}`);
 
   const response = await http.stream(
     `${config.REGISTRY}/${spec.name}/-/${spec.name}-${spec.version}.tgz`

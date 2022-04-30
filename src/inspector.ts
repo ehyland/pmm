@@ -13,7 +13,7 @@ export async function findPackageManagerSpec() {
     if (typeof specString === 'string') {
       const spec = parseSpecString(specString);
       if (spec) {
-        return { packageJSONPath: current, spec };
+        return { packageJSONPath: path.resolve(current, 'package.json'), spec };
       }
     }
 

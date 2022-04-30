@@ -4,6 +4,8 @@ import { PackageManagerSpec } from './config';
 
 jest.setTimeout(10 * 10000);
 
+const versionMatcher = expect.stringMatching(/^\d+\.\d+\.\d+$/);
+
 describe('installer', () => {
   describe('install', () => {
     describe('pnpm', () => {
@@ -77,7 +79,7 @@ describe('installer', () => {
       const result1 = await installer.getLatestVersion('pnpm');
 
       expect(result1).toEqual({
-        version: '6.32.9',
+        version: versionMatcher,
       });
     });
   });

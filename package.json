@@ -6,18 +6,26 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -rf dist && webpack",
-    "build:watch": "webpack --watch",
+    "dev": "webpack --watch",
     "test": "jest --runInBand --verbose",
-    "test:watch": "pnpm test -- --watch"
+    "test:watch": "pnpm test -- --watch",
+    "add-change": "changeset add",
+    "format:write": "pnpm format -- --write",
+    "format:check": "pnpm format -- --check",
+    "format": "prettier 'src/**/*.{js,ts}'"
   },
   "files": [
     "dist",
     "bin",
     "enable.sh"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
+    "@changesets/cli": "^2.22.0",
     "@npmcli/package-json": "^2.0.0",
     "@types/debug": "^4.1.7",
     "@types/jest": "^27.4.1",
@@ -26,6 +34,8 @@
     "@types/tar": "^6.1.1",
     "debug": "^4.3.4",
     "jest": "^27.5.1",
+    "kleur": "^4.1.4",
+    "prettier": "^2.6.2",
     "sade": "^1.8.1",
     "tar": "^6.1.11",
     "ts-jest": "^27.1.4",
