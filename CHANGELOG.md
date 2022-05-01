@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.2.2
+
+### Patch Changes
+
+- 89140ff: fix main being released on pr tag
+
 ## 0.2.1
 
 ### Patch Changes
