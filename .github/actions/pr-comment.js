@@ -64,10 +64,7 @@ Last published commit \`${context.sha}\`
 \`\`\`json
 ${JSON.stringify(
   {
-    'context.sha': context.sha,
-    'process.env.PARENT_SHA': process.env.PARENT_SHA,
-    'process.env.parentSHA': process.env.parentSHA,
-    'github.event.pull_request.head.sha': context.event.pull_request.head.sha,
+    'process.env.GITHUB_PR_COMMIT_SHA': process.env.GITHUB_PR_COMMIT_SHA,
   },
   null,
   '  '

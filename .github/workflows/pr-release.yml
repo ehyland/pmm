@@ -2,7 +2,8 @@ on:
   pull_request:
 
 env:
-  GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+  GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+  GITHUB_PR_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
 
 jobs:
   pr-release:
