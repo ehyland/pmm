@@ -2,7 +2,8 @@ on:
   pull_request:
 
 env:
-  GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+  GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+  GITHUB_PR_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
 
 jobs:
   pr-release:
@@ -12,8 +13,11 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - run: scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
-
       - run: npm set "//registry.npmjs.org/:_authToken" ${{ secrets.NPM_TOKEN }}
 
-      - run: scripts/ci/publish "pr-${GITHUB_PR_NUMBER}"
+      - run: scripts/ci/snapshot-release
+
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            require('./.github/actions/pr-comment.js')({ github, context })

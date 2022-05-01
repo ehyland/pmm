@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euo pipefail
+
+echo "---
+'@ehyland/pmm': patch
+---
+Snapshot Release
+" > .changeset/snapshot.md
+
+scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
+
+scripts/ci/publish "pr-${GITHUB_PR_NUMBER}"
