@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -euo pipefail
+
+npm set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"
+
+echo "---
+'@ehyland/pmm': patch
+---
+Snapshot Release
+" > .changeset/snapshot.md
+
+scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
+
+scripts/ci/publish "pr-${GITHUB_PR_NUMBER}"

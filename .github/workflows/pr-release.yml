@@ -12,8 +12,6 @@ jobs:
 
       - uses: ./.github/actions/setup
 
-      - run: scripts/ci/version "pr-${GITHUB_PR_NUMBER}"
-
       - run: npm set "//registry.npmjs.org/:_authToken" ${{ secrets.NPM_TOKEN }}
 
-      - run: scripts/ci/publish "pr-${GITHUB_PR_NUMBER}"
+      - run: scripts/ci/snapshot-release
