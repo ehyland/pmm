@@ -19,11 +19,6 @@ module.exports = async ({ github, context }) => {
    */
   let comment;
 
-  console.log({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-  });
-
   for await (const { data: comments } of github.paginate.iterator(
     github.rest.issues.listComments,
     {
@@ -51,6 +46,7 @@ module.exports = async ({ github, context }) => {
     await github.rest.issues.createComment({
       owner: context.repo.owner,
       repo: context.repo.repo,
+      issue_number: context.issue.number,
       body: createCommentBody({ context, github }),
     });
   }
