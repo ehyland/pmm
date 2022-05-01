@@ -19,6 +19,11 @@ module.exports = async ({ github, context }) => {
    */
   let comment;
 
+  console.log({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+  });
+
   for await (const { data: comments } of github.paginate.iterator(
     github.rest.issues.listComments,
     {
