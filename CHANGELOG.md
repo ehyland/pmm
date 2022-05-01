@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.2.3
+
+### Patch Changes
+
+- ddc00bb: Fix install script for node environments with smaller buffer sizes
+
 ## 0.2.2
 
 ### Patch Changes
