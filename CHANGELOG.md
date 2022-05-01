@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.2.1
+
+### Patch Changes
+
+- f326b90: Re release with correct tag
+
 ## 0.2.0
 
 ### Minor Changes
