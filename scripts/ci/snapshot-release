@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-npm set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"
-
 echo "---
 '@ehyland/pmm': patch
 ---
