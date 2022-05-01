@@ -14,10 +14,6 @@ const COMMENT_HEADER = '# Release Bot';
  * @param {Options} options
  */
 module.exports = async ({ github, context }) => {
-  // github.pulls.comment
-  // github.issues.find({})
-  // github.issues.updateComment({})
-
   /**
    * @type {Comment | undefined}
    */
@@ -40,14 +36,14 @@ module.exports = async ({ github, context }) => {
   }
 
   if (comment) {
-    await github.issues.updateComment({
+    await github.rest.issues.updateComment({
       owner: context.repo.owner,
       repo: context.repo.repo,
       body: createCommentBody({ context, github }),
       comment_id: comment.id,
     });
   } else {
-    await github.issues.createComment({
+    await github.rest.issues.createComment({
       owner: context.repo.owner,
       repo: context.repo.repo,
       body: createCommentBody({ context, github }),
