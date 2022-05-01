@@ -59,15 +59,10 @@ const createCommentBody = ({ context }) => `${COMMENT_HEADER}
 
 Release packages with tag \`pr-${context.issue.number}\`
 
-Last published commit \`${context.sha}\`
-
-\`\`\`json
-${JSON.stringify(
-  {
-    'process.env.GITHUB_PR_COMMIT_SHA': process.env.GITHUB_PR_COMMIT_SHA,
-  },
-  null,
-  '  '
-)}
-\`\`\`
+Last published change => [\`${process.env.GITHUB_PR_COMMIT_SHA.slice(
+  0,
+  7
+)}\`](https://github.com/${context.repo.owner}/${context.repo.owner}/pull/${
+  context.issue.number
+}/commits/${process.env.GITHUB_PR_COMMIT_SHA})
 `;
