@@ -8,9 +8,16 @@ registry="${PMM_NPM_REGISTRY:-$default_registry}"
 package_scope="@ehyland/"
 package_name="pmm"
 package_name_full="$package_scope$package_name"
+parse_json_script="
+  let dataString = '';
+  process.stdin.setEncoding('utf8')
+    .on('data', (chunk) => dataString+=chunk )
+    .on('end', () => console.log(JSON.parse(dataString).version))
+"
+
 version=$(
   curl -fsSL "${registry}/${package_name_full}/latest" \
-  | node -e "process.stdin.setEncoding('utf8').on('data', (chunk) => console.log(JSON.parse(chunk).version) )"
+  | node -e "$parse_json_script"
 )
 
 echo "Installing $version"
