@@ -62,7 +62,7 @@ Release packages with tag \`pr-${context.issue.number}\`
 Last published change => [\`${process.env.GITHUB_PR_COMMIT_SHA.slice(
   0,
   7
-)}\`](https://github.com/${context.repo.owner}/${context.repo.owner}/pull/${
+)}\`](https://github.com/${context.repo.owner}/${context.repo.repo}/pull/${
   context.issue.number
 }/commits/${process.env.GITHUB_PR_COMMIT_SHA})
 `;
