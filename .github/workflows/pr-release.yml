@@ -17,8 +17,6 @@ jobs:
       - run: scripts/ci/snapshot-release
 
       - uses: actions/github-script@v6
-        env:
-          PARENT_SHA: '${{env.parentSHA}}'
         with:
           script: |
             require('./.github/actions/pr-comment.js')({ github, context })

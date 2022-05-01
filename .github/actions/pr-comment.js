@@ -67,6 +67,7 @@ ${JSON.stringify(
     'context.sha': context.sha,
     'process.env.PARENT_SHA': process.env.PARENT_SHA,
     'process.env.parentSHA': process.env.parentSHA,
+    'github.event.pull_request.head.sha': context.event.pull_request.head.sha,
   },
   null,
   '  '
