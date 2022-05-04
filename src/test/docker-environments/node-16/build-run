@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -euxo pipefail
+
+docker build -t local/node-16 -f src/test/docker-environments/node-16/Dockerfile.node-16 .
+
+docker run --rm local/node-16 $@
