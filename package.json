@@ -47,7 +47,7 @@
     "sade": "^1.8.1",
     "strip-ansi": "^6",
     "tar": "^6.1.11",
-    "ts-jest": "28.0.0-next.3",
+    "ts-jest": "28.0.1",
     "ts-loader": "^9.3.0",
     "tslib": "^2.4.0",
     "type-fest": "^2.12.2",

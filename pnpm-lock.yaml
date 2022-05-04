@@ -22,7 +22,7 @@ specifiers:
   sade: ^1.8.1
   strip-ansi: ^6
   tar: ^6.1.11
-  ts-jest: 28.0.0-next.3
+  ts-jest: 28.0.1
   ts-loader: ^9.3.0
   tslib: ^2.4.0
   type-fest: ^2.12.2
@@ -53,7 +53,7 @@ devDependencies:
   sade: 1.8.1
   strip-ansi: 6.0.1
   tar: 6.1.11
-  ts-jest: 28.0.0-next.3_gwmdgjhs6y73u3mbuuhctmzw44
+  ts-jest: 28.0.1_gwmdgjhs6y73u3mbuuhctmzw44
   ts-loader: 9.3.0_dgip6vjrhmffcc4ihrseicj6om
   tslib: 2.4.0
   type-fest: 2.12.2
@@ -3804,9 +3804,9 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /ts-jest/28.0.0-next.3_gwmdgjhs6y73u3mbuuhctmzw44:
-    resolution: {integrity: sha512-R1mD18XKfd2Cb1qpjXfB3FfJ+yX8G75czuSnDu3hAcccPumeC3FKwAM6dGMvt5Yl0RSGw+bUQskp4zDma3Gdgg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.13.0 || >=17.0.0}
+  /ts-jest/28.0.1_gwmdgjhs6y73u3mbuuhctmzw44:
+    resolution: {integrity: sha512-PbkbitaT/9ZYAqqzk3UYTvCq080Seo46T3m/AdwcZ0D8WH2uBhG6PvA8oOAWsZIknzPQU66fYobvFCL8IqIhmg==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
     peerDependencies:
       '@babel/core': '>=7.0.0-beta.0 <8'
