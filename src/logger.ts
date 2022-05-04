@@ -6,15 +6,15 @@ import kleur from 'kleur';
 const debugLogger = debugLib('pmm');
 
 export function friendly(message: string) {
-  console.log(`🎁  ${message}`);
+  process.stderr.write(`🎁  ${message}`);
 }
 
 export function userError(message: string) {
-  console.log(kleur.bgRed(`⚠️  ${message}`));
+  process.stderr.write(kleur.bgRed(`⚠️  ${message}`));
 }
 
 export function info(message: string) {
-  console.log(message);
+  process.stderr.write(message);
 }
 
 export function debug(formatter: any, ...args: any[]) {

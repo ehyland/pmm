@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -euo pipefail
+
+bash src/test/docker-environments/node-16/build-run \
+  pnpm jest \
+    --runInBand \
+    --verbose \
+    --config ./jest.config.e2e.js
