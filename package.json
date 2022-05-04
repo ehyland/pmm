@@ -1,6 +1,6 @@
 {
   "name": "@ehyland/pmm",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "my take on corepack",
   "packageManager": "pnpm@7.0.0",
   "main": "index.js",
