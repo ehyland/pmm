@@ -18,6 +18,8 @@ export PMM_DIR="$HOME/.pmm"
 
 const EXPECTED_PMM_BIN_PATH = path.resolve(HOME, '.pmm/package/bin');
 
+const WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/');
+
 async function human(shellCmd: string) {
   const result = await execa.command(shellCmd, {
     all: true,
@@ -88,17 +90,18 @@ describe('test-install-and-usage', () => {
   ])(
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
-      let WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/', name, version);
-      let PKG_FILE_PATH = path.resolve(WORKSPACE_PATH, 'package.json');
+      const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, version);
+      const PKG_FILE_PATH = path.resolve(PROJECT_PATH, 'package.json');
+
       let result: execa.ExecaReturnValue<string>;
 
       beforeAll(async () => {
-        await fs.mkdir(WORKSPACE_PATH, { recursive: true });
+        await fs.mkdir(PROJECT_PATH, { recursive: true });
         await fs.writeFile(
           PKG_FILE_PATH,
           JSON.stringify({ packageManager: `${name}@${version}` })
         );
-        result = await shell(`${name} -v`, { cwd: WORKSPACE_PATH });
+        result = await shell(`${name} -v`, { cwd: PROJECT_PATH });
       });
 
       it('uses configured package manager', async () => {
@@ -110,39 +113,37 @@ describe('test-install-and-usage', () => {
   describe.each([{ name: 'pnpm' }, { name: 'npm' }])(
     'when $name is called from a project that has not been configured',
     ({ name }) => {
-      let WORKSPACE_PATH = path.resolve(
-        HOME,
-        'test-workspace/',
-        name,
-        'default'
-      );
-      let PKG_FILE_PATH = path.resolve(WORKSPACE_PATH, 'package.json');
+      const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, 'default');
+      const PKG_FILE_PATH = path.resolve(PROJECT_PATH, 'package.json');
+
       let result: execa.ExecaReturnValue<string>;
-      let version: string;
+      let loggedVersion: string;
 
       beforeAll(async () => {
-        await fs.mkdir(WORKSPACE_PATH, { recursive: true });
+        await fs.mkdir(PROJECT_PATH, { recursive: true });
         await fs.writeFile(
           PKG_FILE_PATH,
           JSON.stringify({
             name: `i-have-not-discovered-the-beauty-that-is-pmm`,
           })
         );
-        result = await shell(`${name} -v`, { cwd: WORKSPACE_PATH });
-        version = result.stdout;
+        result = await shell(`${name} -v`, { cwd: PROJECT_PATH });
+        loggedVersion = result.stdout;
       });
 
       it('calls the latest version', () => {
-        expect(version).toMatch(/\d+\.\d+\.\d+/);
+        expect(loggedVersion).toMatch(/\d+\.\d+\.\d+/);
       });
 
       it('installs the latest version', () => {
-        expect(result.stderr).toMatch(`🎁  Installing ${name}@${version}`);
+        expect(result.stderr).toMatch(
+          `🎁  Installing ${name}@${loggedVersion}`
+        );
       });
 
       it('sets it as the as the default', async () => {
         expect(result.stderr).toMatch(
-          `🎁  Setting ${name} default to version ${version}`
+          `🎁  Setting ${name} default to version ${loggedVersion}`
         );
       });
 
@@ -150,12 +151,12 @@ describe('test-install-and-usage', () => {
         let secondCall: execa.ExecaReturnValue<string>;
 
         beforeAll(async () => {
-          secondCall = await shell(`${name} -v`, { cwd: WORKSPACE_PATH });
+          secondCall = await shell(`${name} -v`, { cwd: PROJECT_PATH });
         });
 
         it('remembers the default', () => {
           expect(secondCall.stderr).toBe('');
-          expect(secondCall.stdout).toBe(version);
+          expect(secondCall.stdout).toBe(loggedVersion);
         });
       });
     }
