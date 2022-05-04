@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.2.4
+
+### Patch Changes
+
+- 43af640: Fix install script for node environments with smaller buffer sizes
+
 ## 0.2.3
 
 ### Patch Changes
