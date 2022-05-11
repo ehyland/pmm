@@ -1,4 +1,4 @@
-const COMMENT_HEADER = '# Release Bot';
+const COMMENT_HEADER = '### 🤖 PR Release Bot';
 
 /**
  * @typedef { import('@octokit/openapi-types').components['schemas']['issue-comment'] } Comment
@@ -57,7 +57,7 @@ module.exports = async ({ github, context }) => {
  */
 const createCommentBody = ({ context }) => `${COMMENT_HEADER}
 
-Release packages with tag \`pr-${context.issue.number}\`
+Packages in this PR have been release with tag \`pr-${context.issue.number}\`
 
 Last published change => [\`${process.env.GITHUB_PR_COMMIT_SHA.slice(
   0,
