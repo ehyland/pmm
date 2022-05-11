@@ -1,0 +1,24 @@
+{
+  "name": "@ehyland/pmm",
+  "version": "0.2.5",
+  "description": "my take on corepack",
+  "main": "dist/ehyland-pmm.cjs.js",
+  "files": [
+    "dist",
+    "bin",
+    "enable.sh"
+  ],
+  "author": "Eamon Hyland",
+  "license": "ISC",
+  "devDependencies": {
+    "@npmcli/package-json": "^2.0.0",
+    "@types/node": "^16.11.34",
+    "@types/tar": "^6.1.1",
+    "debug": "^4.3.4",
+    "kleur": "^4.1.4",
+    "sade": "^1.8.1",
+    "tar": "^6.1.11",
+    "type-fest": "^2.12.2",
+    "v8-compile-cache": "^2.3.0"
+  }
+}

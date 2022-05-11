@@ -1,8 +1,13 @@
 const TerserPlugin = require(`terser-webpack-plugin`);
 const webpack = require(`webpack`);
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('node:path');
+
+const pkgPath = path.resolve('packages/pmm');
 
 /** @type {import("webpack").Configuration} */
 module.exports = {
+  context: pkgPath,
   mode: 'production',
   target: 'node',
   devtool: false,
@@ -12,6 +17,7 @@ module.exports = {
     ['pmm-cli']: './src/pmm-cli.ts',
   },
   output: {
+    path: path.resolve(pkgPath, 'dist'),
     libraryTarget: `commonjs`,
   },
   resolve: {
@@ -44,6 +50,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new webpack.BannerPlugin({
       entryOnly: true,
       banner: `#!/usr/bin/env node\n/* eslint-disable */`,
