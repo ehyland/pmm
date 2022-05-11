@@ -19,7 +19,7 @@ jobs:
 
       - name: Release / Create Version PR
         id: changesets
-        uses: changesets/action@v1.2.2
+        uses: changesets/action@v1.3.0
         with:
           version: scripts/ci/version
           publish: scripts/ci/publish
