@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.2.5
+
+### Patch Changes
+
+- d54a281: fix logger output with new line after message
+
 ## 0.2.4
 
 ### Patch Changes
