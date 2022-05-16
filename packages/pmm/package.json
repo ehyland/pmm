@@ -2,7 +2,6 @@
   "name": "@ehyland/pmm",
   "version": "0.2.5",
   "description": "my take on corepack",
-  "main": "dist/ehyland-pmm.cjs.js",
   "files": [
     "dist",
     "bin",
