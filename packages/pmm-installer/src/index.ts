@@ -1,5 +1,5 @@
 import sade from 'sade';
-import { version } from '../package.json';
+import pkg from '../package.json';
 import npmFetch from 'npm-registry-fetch';
 import pickManifest from 'npm-pick-manifest';
 import npa from 'npm-package-arg';
@@ -16,7 +16,7 @@ import chmodr from 'chmodr';
 const cli = sade('pmm-installer [version]', true);
 
 cli
-  .version(version)
+  .version(pkg.version)
   .example('pmm-installer latest')
   .example('pmm-installer 0.2.3')
   .option('--plz', 'Be nice');

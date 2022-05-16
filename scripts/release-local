@@ -3,7 +3,8 @@
 set -euo pipefail
 
 if [[ -z "${IS_CHILD_PROCESS:-}" ]]; then
-  echo "IS_CHILD_PROCESS=1 pnpm -r exec $(realpath $0)"
+  pnpm build
+  IS_CHILD_PROCESS=1 pnpm -r exec $(realpath $0)
   exit 0
 fi
 
@@ -27,7 +28,6 @@ new_version=$(
     "$initial_version-latest-local.$(date +%s)"
 )
 
-pnpm build
 pnpm publish \
   --no-git-checks \
   --registry http://localhost:4873 \
