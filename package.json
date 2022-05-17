@@ -20,9 +20,6 @@
       "packages/*"
     ]
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
