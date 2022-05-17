@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+echo "Installing pmm"
+
 PMM_DIR="$HOME/.pmm"
 PMM_PACKAGE_PATH="$PMM_DIR/package"
 
@@ -11,33 +13,37 @@ fi
 
 mkdir -p "$PMM_PACKAGE_PATH"
 
-# allow installation of local tar file
-if [[ -n "${PMM_INSTALL_LOCAL_TAR_PATH-}" ]]; then
-  echo "Installing locally backed version"
-  cat "$PMM_INSTALL_LOCAL_TAR_PATH" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
-else
-  default_registry="https://registry.npmjs.org"
-  registry="${PMM_NPM_REGISTRY:-$default_registry}"
+global_registry=$(npm config get registry)
+fallback_registry="https://registry.npmjs.org/"
+default_registry="${global_registry:-$fallback_registry}"
+registry="${PMM_NPM_REGISTRY:-$default_registry}"
 
-  package_scope="@ehyland/"
-  package_name="pmm"
-  package_name_full="$package_scope$package_name"
-  parse_json_script="
-    let dataString = '';
-    process.stdin.setEncoding('utf8')
-      .on('data', (chunk) => dataString+=chunk )
-      .on('end', () => console.log(JSON.parse(dataString).version))
-  "
+# remove trailing slash
+registry=$( echo $registry | sed 's|/$||' )
 
-  version=$(
-    curl -fsSL "${registry}/${package_name_full}/latest" \
-    | node -e "$parse_json_script"
-  )
+echo "Using registry $registry"
 
-  echo "Installing $version"
+package_scope="@ehyland/"
+package_name="pmm"
+package_name_full="$package_scope$package_name"
+parse_json_script="
+  let dataString = '';
+  process.stdin.setEncoding('utf8')
+    .on('data', (chunk) => dataString+=chunk )
+    .on('end', () => {
+      const manifest = JSON.parse(dataString);
+      const latest = manifest['dist-tags']['latest'];
+      const tarball = manifest['versions'][latest]['dist']['tarball'];
+      console.log(tarball);
+    })
+"
 
-  curl -fsSL "${registry}/${package_name_full}/-/$package_name-${version}.tgz" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
-fi
+manifest=$(curl -fsSL "${registry}/${package_name_full}")
+tarball=$(echo "$manifest" | node -e "$parse_json_script")
+
+echo "Installing $tarball"
+
+curl -fsSL "${tarball}" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
 
 chmod -R +x "$PMM_PACKAGE_PATH/bin/"
 
