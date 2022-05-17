@@ -5,10 +5,6 @@ import path from 'node:path';
 import { escapeRegExp } from 'lodash';
 import ms from 'ms';
 
-const INSTALL_METHOD =
-  process.env.PMM_INSTALL_METHOD === 'remote' ? 'remote' : 'local';
-const INSTALL_REMOTE_BRANCH = process.env.INSTALL_REMOTE_BRANCH ?? 'main';
-
 const HOME = os.homedir();
 const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
 const BASH_RC_LOAD_SCRIPT = `
@@ -20,13 +16,18 @@ const EXPECTED_PMM_BIN_PATH = path.resolve(HOME, '.pmm/package/bin');
 
 const WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/');
 
-async function human(shellCmd: string) {
-  const result = await execa.command(shellCmd, {
+async function human(shellCmd: string, { log = false } = {}) {
+  const cmd = execa.command(shellCmd, {
     all: true,
     shell: '/bin/bash',
     env: { PATH: `${EXPECTED_PMM_BIN_PATH}:${process.env.PATH}` },
   });
 
+  if (log) {
+    cmd.all?.on('data', (data) => process.stderr.write(data));
+  }
+
+  const result = await cmd;
   return result.all!;
 }
 
@@ -42,24 +43,56 @@ async function shell(shellCmd: string, options?: execa.Options<string>) {
 
 jest.setTimeout(ms('20 seconds'));
 
-beforeAll(() => {
+let verdaccio: execa.ExecaChildProcess<string>;
+
+beforeAll(async () => {
   if (process.env.IS_RUNNING_IN_TEST_CONTAINER !== 'true') {
     throw new Error(
       'This test suit is designed to be run in a fresh docker environment \nPlease run with ./scripts/test-e2e'
     );
   }
+
+  verdaccio = execa.command(
+    'verdaccio --config test/docker-environments/node-16/verdaccio.config.yml',
+    {
+      encoding: 'utf8',
+      all: true,
+    }
+  );
+
+  await new Promise((resolve) => {
+    verdaccio.all!.on('data', (line) => {
+      process.stderr.write(line);
+      if (/http address/.test(line)) {
+        resolve(undefined);
+      }
+    });
+  });
+
+  await execa.command('npm set registry http://localhost:4873/', {
+    stdio: 'inherit',
+  });
+
+  await fs.appendFile(
+    path.resolve(os.homedir(), '.npmrc'),
+    // random auth token, not checked by verdaccio
+    `\n//localhost:4873/:_authToken="SYLHAHM+lxX2rRAbFIpBXw=="`,
+    'utf8'
+  );
+
+  await execa.command('./scripts/release-local', { stdio: 'inherit' });
+});
+
+afterAll((done) => {
+  verdaccio.once('exit', () => {
+    done();
+  });
+  verdaccio.kill();
 });
 
 describe('test-install-and-usage', () => {
   beforeAll(async () => {
-    if (INSTALL_METHOD === 'local') {
-      await human('cat ./install.sh | bash');
-    } else {
-      await human(
-        `curl -o- https://raw.githubusercontent.com/ehyland/pmm/${INSTALL_REMOTE_BRANCH}/install.sh | bash`
-      );
-    }
-
+    await human('cat ./install.sh | bash', { log: true });
     await fs.writeFile(BASH_RC_FILE, BASH_RC_LOAD_SCRIPT, 'utf8');
   });
 

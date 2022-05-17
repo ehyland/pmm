@@ -1,7 +1,7 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   preset: 'ts-jest',
-  rootDir: 'src',
+  rootDir: 'packages',
   testMatch: ['<rootDir>/**/*.test.(ts|tsx)'],
   testEnvironment: 'node',
   globals: {
@@ -9,4 +9,8 @@ module.exports = {
       isolatedModules: true,
     },
   },
+  watchPlugins: [
+    'jest-watch-typeahead/filename',
+    'jest-watch-typeahead/testname',
+  ],
 };
