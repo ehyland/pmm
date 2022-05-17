@@ -10,13 +10,13 @@ const packages = [
       ['pmm-cli']: './src/pmm-cli.ts',
     },
   ],
-  [
-    'pmm-installer',
-    {
-      ['v8-compile-cache']: `v8-compile-cache`,
-      ['installer']: './src/index.ts',
-    },
-  ],
+  // [
+  //   'pmm-installer',
+  //   {
+  //     ['v8-compile-cache']: `v8-compile-cache`,
+  //     ['installer']: './src/index.ts',
+  //   },
+  // ],
 ];
 
 module.exports = (_, { mode = 'production' }) => {
