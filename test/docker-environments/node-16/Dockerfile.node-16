@@ -18,6 +18,8 @@ RUN chown -R node:node \
 USER node
 WORKDIR /app
 
+RUN npm i -g verdaccio@5.10.2
+
 # copy deps spec
 COPY --chown=node:node package.json pnpm-lock.yaml /app/
 
@@ -28,13 +30,7 @@ RUN pnpm fetch
 
 COPY --chown=node:node . /app/
 
-RUN pnpm install --offline
+RUN pnpm install --prefer-offline
 
 ENV IS_RUNNING_IN_TEST_CONTAINER="true"
-ENV PMM_INSTALL_LOCAL_TAR_PATH="./ehyland-pmm-0.0.0.tgz"
-RUN pnpm version "0.0.0" \
-  --no-commit-hooks \
-  --no-git-tag-version \
-  && pnpm build \
-  && pnpm pack
 

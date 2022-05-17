@@ -1,4 +1,5 @@
 import sade from 'sade';
+import path from 'node:path';
 import * as logger from './logger';
 import * as defaults from './defaults';
 import * as installer from './installer';
@@ -41,7 +42,11 @@ cli
         spec: { name: search.spec.name, version: latest.version },
       });
 
-      const pkg = await packageHelper.load(search.packageJSONPath);
+      logger.info(search.packageJSONPath);
+
+      const pkg = await packageHelper.load(
+        path.dirname(search.packageJSONPath)
+      );
 
       pkg.update({
         packageManager: `${search.spec.name}@${latest.version}`,

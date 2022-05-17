@@ -1,5 +1,4 @@
 /node_modules
-/dist
-/installed-versions
-/db
+/packages/*/node_modules
+/packages/*/dist
 /.vscode
