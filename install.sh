@@ -41,8 +41,6 @@ parse_json_script="
 manifest=$(curl -fsSL "${registry}/${package_name_full}")
 tarball=$(echo "$manifest" | node -e "$parse_json_script")
 
-echo "Installing $tarball"
-
 curl -fsSL "${tarball}" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
 
 chmod -R +x "$PMM_PACKAGE_PATH/bin/"
