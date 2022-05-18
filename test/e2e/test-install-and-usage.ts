@@ -12,7 +12,9 @@ export PMM_DIR="$HOME/.pmm"
 [ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
 `;
 
-const EXPECTED_PMM_BIN_PATH = path.resolve(HOME, '.pmm/package/bin');
+const NPMRC_PATH = path.resolve(HOME, '.npmrc');
+const PMM_INSTALL_PATH = path.resolve(HOME, '.pmm');
+const PMM_BIN_PATH = path.resolve(PMM_INSTALL_PATH, 'package/bin');
 
 const WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/');
 
@@ -20,7 +22,7 @@ async function human(shellCmd: string, { log = false } = {}) {
   const cmd = execa.command(shellCmd, {
     all: true,
     shell: '/bin/bash',
-    env: { PATH: `${EXPECTED_PMM_BIN_PATH}:${process.env.PATH}` },
+    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
   });
 
   if (log) {
@@ -34,7 +36,7 @@ async function human(shellCmd: string, { log = false } = {}) {
 async function shell(shellCmd: string, options?: execa.Options<string>) {
   const result = await execa.command(shellCmd, {
     shell: '/bin/bash',
-    env: { PATH: `${EXPECTED_PMM_BIN_PATH}:${process.env.PATH}` },
+    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
     ...options,
   });
 
@@ -83,11 +85,25 @@ beforeAll(async () => {
   await execa.command('./scripts/release-local', { stdio: 'inherit' });
 });
 
-afterAll((done) => {
-  verdaccio.once('exit', () => {
-    done();
+afterAll(async () => {
+  await fs.rm(PMM_INSTALL_PATH, { recursive: true, force: true }).catch(() => {
+    /* ignore */
   });
-  verdaccio.kill();
+
+  await fs.rm(NPMRC_PATH, { recursive: true, force: true }).catch(() => {
+    /* ignore */
+  });
+
+  await fs.rm(WORKSPACE_PATH, { recursive: true, force: true }).catch(() => {
+    /* ignore */
+  });
+
+  await new Promise((resolve) => {
+    verdaccio.once('exit', () => {
+      resolve(undefined);
+    });
+    verdaccio.kill();
+  });
 });
 
 describe('test-install-and-usage', () => {
@@ -98,13 +114,11 @@ describe('test-install-and-usage', () => {
 
   it('adds pmm bin to path', async () => {
     const path = await human('echo $PATH');
-    expect(path).toMatch(
-      new RegExp(`^${escapeRegExp(`${EXPECTED_PMM_BIN_PATH}:`)}.+`)
-    );
+    expect(path).toMatch(new RegExp(`^${escapeRegExp(`${PMM_BIN_PATH}:`)}.+`));
   });
 
   it('shims & pmm cli to bin path', async () => {
-    expect((await fs.readdir(EXPECTED_PMM_BIN_PATH)).sort()).toEqual([
+    expect((await fs.readdir(PMM_BIN_PATH)).sort()).toEqual([
       'npm',
       'pmm',
       'pnpm',
@@ -112,7 +126,7 @@ describe('test-install-and-usage', () => {
   });
 
   it('pmm is in path', async () => {
-    expect(await human(`which pmm`)).toEqual(`${EXPECTED_PMM_BIN_PATH}/pmm`);
+    expect(await human(`which pmm`)).toEqual(`${PMM_BIN_PATH}/pmm`);
   });
 
   describe.each([
