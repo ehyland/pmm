@@ -1,12 +1,12 @@
-storage: ./storage
-plugins: ./plugins
+storage: /verdaccio/storage/data
+plugins: /verdaccio/plugins
 
 web:
   title: Verdaccio
 
 auth:
   htpasswd:
-    file: ./storage/htpasswd
+    file: /verdaccio/storage/htpasswd
 
 uplinks:
   npmjs:

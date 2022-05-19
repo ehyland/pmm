@@ -2,7 +2,9 @@
 
 set -euo pipefail
 
-bash test/docker-environments/node-16/build-run \
+docker-compose build
+
+docker-compose run --rm -it node-16 \
   pnpm jest \
     --runInBand \
     --verbose \

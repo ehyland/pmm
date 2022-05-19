@@ -1,0 +1,16 @@
+# TODO: add npm registry
+
+services:
+  node-16:
+    build:
+      dockerfile: test/e2e/Dockerfile.node
+      args:
+        - NODE_TEST_VERSION=16.15.0
+    environment:
+      - LOCAL_NPM_REGISTRY=http://host.docker.internal:4873/
+    volumes:
+      - ./test:/app/test
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  

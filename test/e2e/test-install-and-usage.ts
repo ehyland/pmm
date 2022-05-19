@@ -13,13 +13,13 @@ export PMM_DIR="$HOME/.pmm"
 `;
 
 const NPMRC_PATH = path.resolve(HOME, '.npmrc');
-const PMM_INSTALL_PATH = path.resolve(HOME, '.pmm');
-const PMM_BIN_PATH = path.resolve(PMM_INSTALL_PATH, 'package/bin');
+const PMM_DIR = path.resolve(HOME, '.pmm');
+const PMM_BIN_PATH = path.resolve(PMM_DIR, 'package/bin');
 
 const WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/');
 
 async function human(shellCmd: string, { log = false } = {}) {
-  const cmd = execa.command(shellCmd, {
+  const cmd = execa.command(`source ${BASH_RC_FILE} || true && ${shellCmd}`, {
     all: true,
     shell: '/bin/bash',
     env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
@@ -34,59 +34,43 @@ async function human(shellCmd: string, { log = false } = {}) {
 }
 
 async function shell(shellCmd: string, options?: execa.Options<string>) {
-  const result = await execa.command(shellCmd, {
-    shell: '/bin/bash',
-    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
-    ...options,
-  });
+  const result = await execa.command(
+    `source ${BASH_RC_FILE} || true && ${shellCmd}`,
+    {
+      shell: '/bin/bash',
+      env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
+      ...options,
+    }
+  );
 
   return result;
 }
 
 jest.setTimeout(ms('20 seconds'));
 
-let verdaccio: execa.ExecaChildProcess<string>;
-
 beforeAll(async () => {
-  if (process.env.IS_RUNNING_IN_TEST_CONTAINER !== 'true') {
+  const { LOCAL_NPM_REGISTRY, IS_RUNNING_IN_TEST_CONTAINER } = process.env;
+
+  // create empty rc file
+  await fs.writeFile(BASH_RC_FILE, '', 'utf8');
+
+  if (IS_RUNNING_IN_TEST_CONTAINER !== 'true') {
     throw new Error(
       'This test suit is designed to be run in a fresh docker environment \nPlease run with ./scripts/test-e2e'
     );
   }
 
-  verdaccio = execa.command(
-    'verdaccio --config test/docker-environments/node-16/verdaccio.config.yml',
-    {
-      encoding: 'utf8',
-      all: true,
-    }
-  );
+  if (typeof LOCAL_NPM_REGISTRY === 'undefined') {
+    throw new Error('Missing LOCAL_NPM_REGISTRY');
+  }
 
-  await new Promise((resolve) => {
-    verdaccio.all!.on('data', (line) => {
-      process.stderr.write(line);
-      if (/http address/.test(line)) {
-        resolve(undefined);
-      }
-    });
-  });
-
-  await execa.command('npm set registry http://localhost:4873/', {
+  await execa.command(`npm set registry ${LOCAL_NPM_REGISTRY}`, {
     stdio: 'inherit',
   });
-
-  await fs.appendFile(
-    path.resolve(os.homedir(), '.npmrc'),
-    // random auth token, not checked by verdaccio
-    `\n//localhost:4873/:_authToken="SYLHAHM+lxX2rRAbFIpBXw=="`,
-    'utf8'
-  );
-
-  await execa.command('./scripts/release-local', { stdio: 'inherit' });
 });
 
 afterAll(async () => {
-  await fs.rm(PMM_INSTALL_PATH, { recursive: true, force: true }).catch(() => {
+  await fs.rm(PMM_DIR, { recursive: true, force: true }).catch(() => {
     /* ignore */
   });
 
@@ -96,13 +80,6 @@ afterAll(async () => {
 
   await fs.rm(WORKSPACE_PATH, { recursive: true, force: true }).catch(() => {
     /* ignore */
-  });
-
-  await new Promise((resolve) => {
-    verdaccio.once('exit', () => {
-      resolve(undefined);
-    });
-    verdaccio.kill();
   });
 });
 
