@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
-docker-compose build
+ENV="${ENV:-node-16}"
 
-docker-compose run --rm -it node-16 \
+docker-compose build "$ENV"
+
+docker-compose run --rm -it "$ENV" \
   pnpm jest \
     --runInBand \
     --verbose \
