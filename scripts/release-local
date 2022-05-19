@@ -8,6 +8,8 @@ if [[ -z "${IS_CHILD_PROCESS:-}" ]]; then
   exit 0
 fi
 
+LOCAL_NPM_REGISTRY="${LOCAL_NPM_REGISTRY:-"http://localhost:48733/"}"
+
 # get initial version
 package_name=`cat ./package.json | jq -r .name`
 initial_version=`cat ./package.json | jq -r .version`
@@ -31,7 +33,7 @@ new_version=$(
 
 pnpm publish \
   --no-git-checks \
-  --registry http://localhost:4873 \
+  --registry "$LOCAL_NPM_REGISTRY" \
   --tag "latest"
 
 echo "🚀 Published $package_name@$new_version"

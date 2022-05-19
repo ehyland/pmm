@@ -44,6 +44,8 @@ class PublishLocalPlugin {
 
 module.exports = (_, { mode = 'production' }) => {
   const IS_DEV = mode !== 'production';
+  const BUILD_WATCH_RELEASE = !!process.env.BUILD_WATCH_RELEASE;
+
   /** @type {import("webpack").Configuration[]} */
   return packages.map(([pkgName, entry]) => {
     const pkgPath = path.resolve(`packages/${pkgName}`);
@@ -91,7 +93,7 @@ module.exports = (_, { mode = 'production' }) => {
           banner: `#!/usr/bin/env node\n/* eslint-disable */`,
           raw: true,
         }),
-        IS_DEV && new PublishLocalPlugin(),
+        BUILD_WATCH_RELEASE && new PublishLocalPlugin(),
       ].filter(Boolean),
       watchOptions: {
         ignored: ['**/node_modules', '**/package.json', '**/dist'],

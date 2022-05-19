@@ -2,12 +2,63 @@
 
 set -euo pipefail
 
-ENV="${ENV:-node-16}"
+function clean_up {
+  docker-compose down
+}
+trap clean_up EXIT
 
-docker-compose build "$ENV"
+# export for use in docker-compose.yml
+export NODE_TEST_VERSION="${NODE_TEST_VERSION:-16}"
 
-docker-compose run --rm -it "$ENV" \
+BUILD_WATCH="${BUILD_WATCH:-}"
+EXTRA_JEST_ARGS=""
+
+docker-compose build
+
+docker-compose up -d registry
+
+last_message=""
+function say_once {
+  message="$@"
+  if [[ "$message" == "$last_message" ]]; then
+    printf "."
+  else
+    last_message="$message"
+    printf "\n$message"
+  fi
+}
+
+if [[ -n "$BUILD_WATCH" ]]; then
+  echo "⚠️  Make sure you run \"pnpm build:watch\" in another console"
+  while true; do
+
+    package_status=$(
+      curl -s -o /dev/null -w "%{http_code}" http://localhost:48733/@ehyland/pmm/latest || true
+    )
+
+    if [[ "$package_status" == "000" ]]; then 
+      say_once "waiting for registry to boot"
+    elif [[ "$package_status" == "404" ]]; then
+      say_once "waiting for package to be published"
+    elif [[ "$package_status" == "200" ]]; then
+      say_once "package found"
+      break;
+    else
+      say_once "unexpected status $package_status"
+    fi
+
+    sleep 1
+  done
+  
+  echo ""
+  
+  EXTRA_JEST_ARGS+=" --watchAll"
+else
+  docker-compose run builder ./scripts/docker/builder-entrypoint
+fi
+
+docker-compose run --rm -it tester \
   pnpm jest \
     --runInBand \
     --verbose \
-    --config ./jest.config.e2e.js $@
+    --config ./jest.config.e2e.js $EXTRA_JEST_ARGS

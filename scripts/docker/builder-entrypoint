@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -euo pipefail
+
+echo '' >> ~/.npmrc
+echo '//localhost:48733/:_authToken="SYLHAHM+lxX2rRAbFIpBXw=="' >> ~/.npmrc
+
+scripts/release-local
