@@ -51,10 +51,10 @@ if [[ -n "$BUILD_WATCH" ]]; then
   done
   
   echo ""
-  
+
   EXTRA_JEST_ARGS+=" --watchAll"
 else
-  docker-compose run builder ./scripts/docker/builder-entrypoint
+  docker-compose run --rm -it builder ./scripts/docker/builder-entrypoint
 fi
 
 docker-compose run --rm -it tester \
