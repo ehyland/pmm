@@ -29,7 +29,8 @@ function say_once {
 }
 
 if [[ -n "$BUILD_WATCH" ]]; then
-  echo "⚠️  Make sure you run \"pnpm build:watch\" in another console"
+  echo ""
+  echo "⚠️  Make sure you run \"pnpm build:watch:release\" in another console"
   while true; do
 
     package_status=$(
