@@ -7,6 +7,8 @@ jobs:
     needs:
       - unit-tests
       - e2e-tests
+    steps:
+      - run: echo "🚀"
 
   unit-tests:
     runs-on: ubuntu-latest
