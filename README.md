@@ -46,3 +46,7 @@ Simply remove the `~/.pmm` dir and the enabling script in your `~/.bashrc`
 export PMM_DIR="$HOME/.pmm"
 [ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
 ```
+
+## Contributing to `pmm`
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
