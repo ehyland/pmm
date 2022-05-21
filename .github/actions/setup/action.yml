@@ -14,13 +14,12 @@ runs:
 
     - shell: bash
       run: |
-        echo "$PATH"
-        VERSION=v2.5.1
-        INSTALL_PATH=/usr/local/bin/docker-compose
+        VERSION="v2.5.1"
+        INSTALL_PATH="$HOME/.local/bin/docker-compose"
         curl \
           -fsSL "https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
-          -o $INSTALL_PATH
-        chmod +x $INSTALL_PATH
+          -o "$INSTALL_PATH"
+        chmod +x "$INSTALL_PATH"
 
     - run: pnpm install
       shell: bash
