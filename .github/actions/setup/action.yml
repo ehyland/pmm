@@ -16,6 +16,8 @@ runs:
       run: |
         VERSION="v2.5.1"
         INSTALL_PATH="$HOME/.local/bin/docker-compose"
+        echo "$INSTALL_PATH"
+        echo "https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)"
         curl \
           -fsSL "https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
           -o "$INSTALL_PATH"
