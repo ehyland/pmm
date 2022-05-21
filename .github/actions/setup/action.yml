@@ -12,7 +12,8 @@ runs:
         node-version: 16
         cache: pnpm
 
-    - shell: bash
+    - name: Install docker-compose v2 (GH actions used v1 by default)
+      shell: bash
       run: |
         VERSION="v2.5.1"
         INSTALL_PATH="$HOME/.local/bin/docker-compose"
