@@ -33,10 +33,17 @@ cli
         logger.userError(
           `Unable to find package.json with "packageManager" field`
         );
-        process.exit(0);
+        process.exit(1);
       }
 
       const latest = await getLatestVersion(search.spec.name);
+
+      if (latest.version === search.spec.version) {
+        logger.info(
+          `Already on latest version ${search.spec.name}@${latest.version}`
+        );
+        return;
+      }
 
       await installer.install({
         spec: { name: search.spec.name, version: latest.version },
@@ -53,6 +60,10 @@ cli
       });
 
       await pkg.save();
+
+      logger.friendly(`Updated registry!`);
+      logger.info(`  From: ${search.spec.name}@${search.spec.version}`);
+      logger.info(`  To  : ${search.spec.name}@${latest.version}`);
     })
   );
 

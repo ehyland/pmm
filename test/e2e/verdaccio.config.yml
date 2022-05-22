@@ -11,6 +11,7 @@ auth:
 uplinks:
   npmjs:
     url: https://registry.npmjs.org/
+    maxage: 60m
 
 packages:
   '@ehyland/*':
