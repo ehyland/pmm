@@ -1,0 +1,34 @@
+# TODO: add npm registry
+
+services:
+  # Local NPM registry
+  registry:
+    image: verdaccio/verdaccio:5.10.2
+    environment:
+      - VERDACCIO_PORT=48733
+    volumes:
+      - ./test/e2e/verdaccio.config.yml:/verdaccio/conf/config.yaml
+    ports:
+      - 48733:48733
+
+  # For building and publishing to a local registry
+  builder:
+    build:
+      dockerfile: test/e2e/Dockerfile.builder
+    network_mode: service:registry
+    environment:
+      - LOCAL_NPM_REGISTRY=http://localhost:48733/
+    volumes:
+      - ./packages/pmm/src:/app/packages/pmm/src
+
+  # NodeJS test environment
+  tester:
+    build:
+      dockerfile: test/e2e/Dockerfile.tester
+      args:
+        - NODE_TEST_VERSION=${NODE_TEST_VERSION}
+    network_mode: service:registry
+    environment:
+      - LOCAL_NPM_REGISTRY=http://localhost:48733/
+    volumes:
+      - ./test:/app/test

@@ -1,110 +1,49 @@
 import execa from 'execa';
 import fs from 'node:fs/promises';
-import os from 'node:os';
 import path from 'node:path';
 import { escapeRegExp } from 'lodash';
 import ms from 'ms';
 
-const HOME = os.homedir();
-const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
-const BASH_RC_LOAD_SCRIPT = `
-export PMM_DIR="$HOME/.pmm"
-[ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
-`;
-
-const EXPECTED_PMM_BIN_PATH = path.resolve(HOME, '.pmm/package/bin');
-
-const WORKSPACE_PATH = path.resolve(HOME, 'test-workspace/');
-
-async function human(shellCmd: string, { log = false } = {}) {
-  const cmd = execa.command(shellCmd, {
-    all: true,
-    shell: '/bin/bash',
-    env: { PATH: `${EXPECTED_PMM_BIN_PATH}:${process.env.PATH}` },
-  });
-
-  if (log) {
-    cmd.all?.on('data', (data) => process.stderr.write(data));
-  }
-
-  const result = await cmd;
-  return result.all!;
-}
-
-async function shell(shellCmd: string, options?: execa.Options<string>) {
-  const result = await execa.command(shellCmd, {
-    shell: '/bin/bash',
-    env: { PATH: `${EXPECTED_PMM_BIN_PATH}:${process.env.PATH}` },
-    ...options,
-  });
-
-  return result;
-}
+import {
+  PMM_BIN_PATH,
+  WORKSPACE_PATH,
+  setupTestProject,
+  TestProject,
+  shell,
+  human,
+  assertValidTestEnvironment,
+  resetBashRc,
+  setNpmRegistry,
+  cleanup,
+  installPmm,
+  callAndCatch,
+  loadPackageJson,
+} from './helpers';
 
 jest.setTimeout(ms('20 seconds'));
 
-let verdaccio: execa.ExecaChildProcess<string>;
-
 beforeAll(async () => {
-  if (process.env.IS_RUNNING_IN_TEST_CONTAINER !== 'true') {
-    throw new Error(
-      'This test suit is designed to be run in a fresh docker environment \nPlease run with ./scripts/test-e2e'
-    );
-  }
-
-  verdaccio = execa.command(
-    'verdaccio --config test/docker-environments/node-16/verdaccio.config.yml',
-    {
-      encoding: 'utf8',
-      all: true,
-    }
-  );
-
-  await new Promise((resolve) => {
-    verdaccio.all!.on('data', (line) => {
-      process.stderr.write(line);
-      if (/http address/.test(line)) {
-        resolve(undefined);
-      }
-    });
-  });
-
-  await execa.command('npm set registry http://localhost:4873/', {
-    stdio: 'inherit',
-  });
-
-  await fs.appendFile(
-    path.resolve(os.homedir(), '.npmrc'),
-    // random auth token, not checked by verdaccio
-    `\n//localhost:4873/:_authToken="SYLHAHM+lxX2rRAbFIpBXw=="`,
-    'utf8'
-  );
-
-  await execa.command('./scripts/release-local', { stdio: 'inherit' });
+  await assertValidTestEnvironment();
+  await resetBashRc();
+  await setNpmRegistry();
 });
 
-afterAll((done) => {
-  verdaccio.once('exit', () => {
-    done();
-  });
-  verdaccio.kill();
+afterAll(async () => {
+  await cleanup();
 });
 
-describe('test-install-and-usage', () => {
+describe('Install and usage', () => {
   beforeAll(async () => {
-    await human('cat ./install.sh | bash', { log: true });
-    await fs.writeFile(BASH_RC_FILE, BASH_RC_LOAD_SCRIPT, 'utf8');
+    await installPmm();
   });
 
   it('adds pmm bin to path', async () => {
     const path = await human('echo $PATH');
-    expect(path).toMatch(
-      new RegExp(`^${escapeRegExp(`${EXPECTED_PMM_BIN_PATH}:`)}.+`)
-    );
+    expect(path).toMatch(new RegExp(`^${escapeRegExp(`${PMM_BIN_PATH}:`)}.+`));
   });
 
   it('shims & pmm cli to bin path', async () => {
-    expect((await fs.readdir(EXPECTED_PMM_BIN_PATH)).sort()).toEqual([
+    expect((await fs.readdir(PMM_BIN_PATH)).sort()).toEqual([
       'npm',
       'pmm',
       'pnpm',
@@ -112,7 +51,7 @@ describe('test-install-and-usage', () => {
   });
 
   it('pmm is in path', async () => {
-    expect(await human(`which pmm`)).toEqual(`${EXPECTED_PMM_BIN_PATH}/pmm`);
+    expect(await human(`which pmm`)).toEqual(`${PMM_BIN_PATH}/pmm`);
   });
 
   describe.each([
@@ -123,18 +62,15 @@ describe('test-install-and-usage', () => {
   ])(
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
-      const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, version);
-      const PKG_FILE_PATH = path.resolve(PROJECT_PATH, 'package.json');
-
+      let testProject: TestProject;
       let result: execa.ExecaReturnValue<string>;
 
       beforeAll(async () => {
-        await fs.mkdir(PROJECT_PATH, { recursive: true });
-        await fs.writeFile(
-          PKG_FILE_PATH,
-          JSON.stringify({ packageManager: `${name}@${version}` })
-        );
-        result = await shell(`${name} -v`, { cwd: PROJECT_PATH });
+        testProject = await setupTestProject({
+          subDir: `${name}/${version}`,
+          packageManager: `${name}@${version}`,
+        });
+        result = await shell(`${name} -v`, { cwd: testProject.projectPath });
       });
 
       it('uses configured package manager', async () => {
@@ -194,4 +130,52 @@ describe('test-install-and-usage', () => {
       });
     }
   );
+
+  describe('pmm update-local', () => {
+    describe('when called in a directory without pm spec', () => {
+      let testProject: TestProject;
+      let error: execa.ExecaError;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({ subDir: 'not-configured' });
+        error = await callAndCatch(() =>
+          human(`pmm update-local`, {
+            cwd: testProject.projectPath,
+          })
+        );
+      });
+
+      it('exits with error', () => {
+        expect(error.all).toBe(
+          `⚠️  Unable to find package.json with "packageManager" field`
+        );
+      });
+    });
+
+    describe('when called in a directory with pm spec', () => {
+      let testProject: TestProject;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({
+          subDir: 'configured',
+          packageManager: 'npm@6.0.0',
+        });
+        await human(`pmm update-local`, {
+          cwd: testProject.projectPath,
+        });
+      });
+
+      it('update the packageManager field', async () => {
+        const { packageManager } = await loadPackageJson(
+          testProject.packageFilePath
+        );
+
+        const match = /^npm@(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/.exec(
+          packageManager
+        )!;
+
+        expect(Number(match.groups?.major)).toBeGreaterThan(6);
+      });
+    });
+  });
 });

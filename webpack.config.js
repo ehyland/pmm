@@ -1,5 +1,6 @@
 const webpack = require(`webpack`);
 const path = require('node:path');
+const execa = require('execa');
 
 const packages = [
   [
@@ -19,7 +20,32 @@ const packages = [
   // ],
 ];
 
+class PublishLocalPlugin {
+  /** @type {import("webpack").WebpackPluginFunction} */
+  apply(compiler) {
+    compiler.hooks.done.tapPromise(
+      'PublishLocalPlugin',
+      async (compilation) => {
+        await execa
+          .command(path.resolve(`./scripts/release-local`), {
+            stdio: 'inherit',
+            cwd: compiler.options.context,
+            env: {
+              IS_CHILD_PROCESS: '1',
+            },
+          })
+          .catch((e) => console.error(e));
+
+        return undefined;
+      }
+    );
+  }
+}
+
 module.exports = (_, { mode = 'production' }) => {
+  const IS_DEV = mode !== 'production';
+  const BUILD_WATCH_RELEASE = !!process.env.BUILD_WATCH_RELEASE;
+
   /** @type {import("webpack").Configuration[]} */
   return packages.map(([pkgName, entry]) => {
     const pkgPath = path.resolve(`packages/${pkgName}`);
@@ -28,13 +54,13 @@ module.exports = (_, { mode = 'production' }) => {
       mode: mode,
       context: pkgPath,
       target: 'node',
-      ...(mode === 'production'
+      ...(IS_DEV
         ? {
-            // production options
-            devtool: false,
+            // development options
           }
         : {
-            // development options
+            // production options
+            devtool: false,
           }),
       entry: entry,
       output: {
@@ -67,7 +93,11 @@ module.exports = (_, { mode = 'production' }) => {
           banner: `#!/usr/bin/env node\n/* eslint-disable */`,
           raw: true,
         }),
-      ],
+        BUILD_WATCH_RELEASE && new PublishLocalPlugin(),
+      ].filter(Boolean),
+      watchOptions: {
+        ignored: ['**/node_modules', '**/package.json', '**/dist'],
+      },
     };
   });
 };

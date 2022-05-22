@@ -1,4 +1,5 @@
-FROM node:16.15.0-alpine
+ARG NODE_TEST_VERSION
+FROM node:${NODE_TEST_VERSION}-alpine
 
 RUN apk add --no-cache \
   bash \
@@ -17,8 +18,6 @@ RUN chown -R node:node \
 
 USER node
 WORKDIR /app
-
-RUN npm i -g verdaccio@5.10.2
 
 # copy deps spec
 COPY --chown=node:node package.json pnpm-lock.yaml /app/
