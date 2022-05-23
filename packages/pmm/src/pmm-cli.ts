@@ -8,8 +8,10 @@ import * as config from './config';
 import { getLatestVersion } from './installer';
 import { isSupportedPackageManager } from './config';
 import packageHelper from '@npmcli/package-json';
+import pkg from '../package.json';
 
 const cli = sade('pmm');
+cli.version(pkg.version);
 
 function handler(cb: sade.Handler): sade.Handler {
   return async (...args: any[]) => {

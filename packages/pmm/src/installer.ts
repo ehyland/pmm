@@ -2,7 +2,7 @@ import path from 'node:path';
 import stream from 'node:stream';
 import * as fs from 'node:fs';
 import * as nodeUtil from 'node:util';
-import { PackageJSON } from './registry/types/package-info';
+import { Packument } from '@npm/types';
 import * as logger from './logger';
 import * as config from './config';
 import * as http from './http';
@@ -76,9 +76,15 @@ export async function install({
 }
 
 export async function getLatestVersion(packageManagerName: string) {
-  const { version } = await http.json<PackageJSON>(
-    `${config.REGISTRY}/${packageManagerName}/latest`
+  const packument = await http.json<Packument>(
+    `${config.REGISTRY}/${packageManagerName}`
   );
+
+  const version = packument['dist-tags']['latest'];
+
+  if (!version) {
+    throw new Error(`Latest dist-tag not found for ${packageManagerName}`);
+  }
 
   return {
     version,

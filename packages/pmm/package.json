@@ -10,6 +10,7 @@
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
+    "@npm/types": "^1.0.2",
     "@npmcli/package-json": "^2.0.0",
     "@types/node": "^16.11.34",
     "@types/tar": "^6.1.1",
