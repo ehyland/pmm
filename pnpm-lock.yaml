@@ -63,6 +63,7 @@ importers:
 
   packages/pmm:
     specifiers:
+      '@npm/types': ^1.0.2
       '@npmcli/package-json': ^2.0.0
       '@types/node': ^16.11.34
       '@types/tar': ^6.1.1
@@ -73,6 +74,7 @@ importers:
       type-fest: ^2.12.2
       v8-compile-cache: ^2.3.0
     devDependencies:
+      '@npm/types': 1.0.2
       '@npmcli/package-json': 2.0.0
       '@types/node': 16.11.36
       '@types/tar': 6.1.1
@@ -1797,6 +1799,10 @@ packages:
       fastq: 1.13.0
     dev: true
 
+  /@npm/types/1.0.2:
+    resolution: {integrity: sha512-KXZccTDEnWqNrrx6JjpJKU/wJvNeg9BDgjS0XhmlZab7br921HtyVbsYzJr4L+xIvjdJ20Wh9dgxgCI2a5CEQw==}
+    dev: true
+
   /@npmcli/package-json/2.0.0:
     resolution: {integrity: sha512-42jnZ6yl16GzjWSH7vtrmWyJDGVa/LXPdpN2rcUWolFjc9ON2N3uz0qdBbQACfmhuJZ2lbKYtmK5qx68ZPLHMA==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
@@ -2162,7 +2168,7 @@ packages:
   /@types/minipass/3.1.2:
     resolution: {integrity: sha512-foLGjgrJkUjLG/o2t2ymlZGEoBNBa/TfoUZ7oCTkOjP1T43UGBJspovJou/l3ZuHvye2ewR5cZNtp2zyWgILMA==}
     dependencies:
-      '@types/node': 16.11.36
+      '@types/node': 17.0.35
     dev: true
 
   /@types/ms/0.7.31:
@@ -2245,7 +2251,7 @@ packages:
     resolution: {integrity: sha512-8mto3YZfVpqB1CHMaYz1TUYIQfZFbh/QbEq5Hsn6D0ilCfqRVCdalmc89B7vi3jhl9UYIk+dWDABShNfOkv5HA==}
     dependencies:
       '@types/minipass': 3.1.2
-      '@types/node': 16.11.36
+      '@types/node': 17.0.35
     dev: true
 
   /@types/yargs-parser/21.0.0:
