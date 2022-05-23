@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.3.1
+
+### Patch Changes
+
+- b215a6a: fix: fetch full packument to get latest version
+
 ## 0.3.0
 
 ### Minor Changes
