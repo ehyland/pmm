@@ -4,9 +4,8 @@ import * as logger from './logger';
 import * as defaults from './defaults';
 import * as installer from './installer';
 import * as inspector from './inspector';
-import * as config from './config';
 import { getLatestVersion } from './installer';
-import { isSupportedPackageManager } from './config';
+import * as specLib from './spec';
 import packageHelper from '@npmcli/package-json';
 import pkg from '../package.json';
 
@@ -76,13 +75,8 @@ cli
   )
   .action(
     handler(async (packageManagerName: string, requestedVersion?: string) => {
-      if (!isSupportedPackageManager(packageManagerName)) {
+      if (!specLib.isSupportedPackageManager(packageManagerName)) {
         logger.userError(`Sorry, "${packageManagerName}" is not yet supported`);
-        process.exit(1);
-      }
-
-      if (requestedVersion && !config.isValidVersionString(requestedVersion)) {
-        logger.userError(`Invalid version "${requestedVersion}"`);
         process.exit(1);
       }
 
@@ -90,7 +84,7 @@ cli
         ? requestedVersion
         : (await getLatestVersion(packageManagerName)).version;
 
-      const spec = { name: packageManagerName, version: version };
+      const spec = specLib.parseSpecString(`${packageManagerName}@${version}`);
 
       await installer.install({ spec });
 

@@ -2,37 +2,57 @@ import path from 'node:path';
 import stream from 'node:stream';
 import * as fs from 'node:fs';
 import * as nodeUtil from 'node:util';
-import { Packument } from '@npm/types';
+import { Packument, PackageJson } from '@npm/types';
 import * as logger from './logger';
 import * as config from './config';
 import * as http from './http';
+import * as specLib from './spec';
 
 interface InstallOptions {
-  spec: config.PackageManagerSpec;
+  spec: specLib.PackageManagerSpec;
   skipCache?: boolean;
 }
 
 interface InstallResult {
   usedCache: boolean;
   installPath: string;
+  executablePath: string;
 }
 
 const streamPipeline = nodeUtil.promisify(stream.pipeline);
 
-export function getInstallPath({ name, version }: config.PackageManagerSpec) {
+export function getInstallPath({ name, version }: specLib.PackageManagerSpec) {
   return path.resolve(
     config.PMM_DIR,
     `./installed-versions/${name}-${version}`
   );
 }
 
-export async function getIsInCache(spec: config.PackageManagerSpec) {
+export async function getIsInCache(spec: specLib.PackageManagerSpec) {
   const installPath = getInstallPath(spec);
 
   return fs.promises.stat(installPath).then(
     (stats) => stats.isDirectory(),
     (error: any) => false
   );
+}
+
+export async function readPackage(
+  spec: specLib.PackageManagerSpec
+): Promise<PackageJson | undefined> {
+  const installPath = getInstallPath(spec);
+  const packagePath = path.resolve(installPath, 'package.json');
+  const packageFileContents = await fs.promises
+    .readFile(packagePath, 'utf8')
+    .catch((e) => undefined);
+
+  if (!packageFileContents) return undefined;
+
+  try {
+    return JSON.parse(packageFileContents) as PackageJson;
+  } catch (error) {
+    logger.info(`Error reading ${packagePath}`);
+  }
 }
 
 export async function install({
@@ -45,11 +65,22 @@ export async function install({
 
   logger.debug(`To path ${installPath}`);
 
-  const existsInCache = await getIsInCache(spec);
+  const packageFromCache = await readPackage(spec);
 
-  if (existsInCache && !skipCache) {
+  if (packageFromCache && !skipCache) {
     logger.debug(`Skipping install as found in cache`);
-    return { installPath, usedCache: true };
+
+    const executablePath = getExecutablePath({
+      installPath,
+      pkg: packageFromCache,
+      executableName: spec.name,
+    });
+
+    return {
+      installPath,
+      executablePath,
+      usedCache: true,
+    };
   }
 
   logger.friendly(`Installing ${spec.name}@${spec.version}`);
@@ -58,7 +89,7 @@ export async function install({
     `${config.REGISTRY}/${spec.name}/-/${spec.name}-${spec.version}.tgz`
   );
 
-  if (existsInCache) {
+  if (packageFromCache) {
     logger.debug(`Clearing cached version`);
     await fs.promises.rm(installPath, { force: true, recursive: true });
   }
@@ -72,7 +103,23 @@ export async function install({
 
   logger.debug(`Installed`);
 
-  return { installPath, usedCache: false };
+  const freshPackage = await readPackage(spec);
+
+  if (!freshPackage) {
+    throw new Error('package.json not found after install');
+  }
+
+  const executablePath = getExecutablePath({
+    installPath,
+    pkg: freshPackage,
+    executableName: spec.name,
+  });
+
+  return {
+    installPath,
+    executablePath,
+    usedCache: false,
+  };
 }
 
 export async function getLatestVersion(packageManagerName: string) {
@@ -89,4 +136,20 @@ export async function getLatestVersion(packageManagerName: string) {
   return {
     version,
   };
+}
+
+function getExecutablePath(options: {
+  installPath: string;
+  pkg: PackageJson;
+  executableName: string;
+}) {
+  const relativeExecutablePath = options.pkg.bin?.[options.executableName];
+
+  if (!relativeExecutablePath) {
+    throw new Error(
+      `Missing bin path for ${options.executableName} in package.json`
+    );
+  }
+
+  return path.resolve(options.installPath, relativeExecutablePath);
 }

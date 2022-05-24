@@ -1,7 +1,7 @@
 import process from 'node:process';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import * as config from './config';
+import * as specLib from './spec';
 
 export async function findPackageManagerSpec() {
   let current = process.cwd();
@@ -11,10 +11,8 @@ export async function findPackageManagerSpec() {
     const specString = packageInfo?.packageManager;
 
     if (typeof specString === 'string') {
-      const spec = parseSpecString(specString);
-      if (spec) {
-        return { packageJSONPath: path.resolve(current, 'package.json'), spec };
-      }
+      const spec = specLib.parseSpecString(specString);
+      return { packageJSONPath: path.resolve(current, 'package.json'), spec };
     }
 
     current = path.dirname(current);
@@ -34,20 +32,4 @@ async function getPackageInDir(dir: string) {
     }
     throw error;
   }
-}
-
-function parseSpecString(
-  specString: string
-): config.PackageManagerSpec | undefined {
-  const [packageManager, version] = specString.split('@');
-
-  if (!config.isSupportedPackageManager(packageManager)) {
-    return undefined;
-  }
-
-  if (!/^\d+\.\d+\.\d+$/.test(version)) {
-    return undefined;
-  }
-
-  return { name: packageManager, version };
 }

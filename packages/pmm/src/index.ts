@@ -6,10 +6,11 @@ import * as installer from './installer';
 import * as config from './config';
 import * as logger from './logger';
 import * as inspector from './inspector';
+import * as specLib from './spec';
 import { getDefaultVersion } from './defaults';
 
 export async function runPackageManager(packageManager: string) {
-  if (!config.isSupportedPackageManager(packageManager)) {
+  if (!specLib.isSupportedPackageManager(packageManager)) {
     logger.friendly(
       `"${packageManager}" is not supported. Supported: [${config.SUPPORTED_PACKAGE_MANAGERS.join(
         ', '
@@ -33,11 +34,11 @@ export async function runPackageManager(packageManager: string) {
     spec = { name: packageManager, version: defaultVersion };
   }
 
-  const { installPath } = await installer.install({ spec });
+  const { executablePath } = await installer.install({ spec });
 
   const [nodePath, _shimPath, ...argvRest] = process.argv;
 
-  spawnSync(nodePath, [installPath, ...argvRest], {
+  spawnSync(nodePath, [executablePath, ...argvRest], {
     stdio: 'inherit',
     env: process.env,
   });

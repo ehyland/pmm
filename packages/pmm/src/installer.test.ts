@@ -1,6 +1,6 @@
 import * as installer from './installer';
 import fs from 'node:fs/promises';
-import { PackageManagerSpec } from './config';
+import { PackageManagerSpec } from './spec';
 
 jest.setTimeout(10 * 10000);
 
