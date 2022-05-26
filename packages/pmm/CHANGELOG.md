@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.4.0
+
+### Minor Changes
+
+- 362ccc6: Add yarn support
+
 ## 0.3.1
 
 ### Patch Changes
