@@ -60,6 +60,8 @@ describe('Install and usage', () => {
     { name: 'pnpm', version: '6.14.7' },
     { name: 'npm', version: '7.24.2' },
     { name: 'npm', version: '6.14.16' },
+    { name: 'yarn', version: '1.21.1' },
+    { name: 'yarn', version: '1.10.1' },
   ])(
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
@@ -80,7 +82,7 @@ describe('Install and usage', () => {
     }
   );
 
-  describe.each([{ name: 'pnpm' }, { name: 'npm' }])(
+  describe.each([{ name: 'pnpm' }, { name: 'npm' }, { name: 'yarn' }])(
     'when $name is called from a project that has not been configured',
     ({ name }) => {
       const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, 'default');
@@ -176,6 +178,57 @@ describe('Install and usage', () => {
         )!;
 
         expect(Number(match.groups?.major)).toBeGreaterThan(6);
+      });
+    });
+
+    describe('when packageManager is set to yarn@3', () => {
+      let testProject: TestProject;
+      let errorResult: any;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({ packageManager: 'yarn@3.2.1' });
+        errorResult = await callAndCatch(() =>
+          human(`yarn -v`, {
+            cwd: testProject.projectPath,
+          })
+        );
+      });
+
+      it('rejects with descriptive message', () => {
+        expect(errorResult.all).toEqual(
+          expect.stringContaining(
+            `Yarn berry (>=2) is executed via yarn classic (=1)`
+          )
+        );
+        expect(errorResult.all).toEqual(
+          expect.stringContaining(
+            `As yarn berry cli is committed to the codebase, so all we need to track is the wrapping yarn classic version`
+          )
+        );
+        expect(errorResult.all).toEqual(
+          expect.stringContaining(
+            `Please update "packageManager" field to point to a yarn classic version. e.g. "yarn@1.22.18"`
+          )
+        );
+      });
+    });
+
+    describe('in a yarn berry project', () => {
+      let testProject: TestProject;
+      let result: string;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({
+          packageManager: 'yarn@1.22.18',
+        });
+        await human(`yarn init -2`, { cwd: testProject.projectPath });
+        result = await human(`yarn -v`, {
+          cwd: testProject.projectPath,
+        });
+      });
+
+      it('prints yarn berry version', () => {
+        expect(result).toMatchInlineSnapshot();
       });
     });
   });
