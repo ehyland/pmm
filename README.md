@@ -10,8 +10,6 @@ Just like corepack, plus
 
 What's missing
 
-⏲️ &nbsp; No `yarn` support (coming soon, on request)
-
 ⏲️ &nbsp; No Windows support (will consider, on request)
 
 > ⚠️ &nbsp; This is early release. There are more feature to add, edges to smooth. But it's already a delight to use

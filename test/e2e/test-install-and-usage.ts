@@ -47,6 +47,7 @@ describe('Install and usage', () => {
       'npm',
       'pmm',
       'pnpm',
+      'yarn',
     ]);
   });
 
@@ -59,6 +60,8 @@ describe('Install and usage', () => {
     { name: 'pnpm', version: '6.14.7' },
     { name: 'npm', version: '7.24.2' },
     { name: 'npm', version: '6.14.16' },
+    { name: 'yarn', version: '1.21.1' },
+    { name: 'yarn', version: '1.10.1' },
   ])(
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
@@ -79,7 +82,7 @@ describe('Install and usage', () => {
     }
   );
 
-  describe.each([{ name: 'pnpm' }, { name: 'npm' }])(
+  describe.each([{ name: 'pnpm' }, { name: 'npm' }, { name: 'yarn' }])(
     'when $name is called from a project that has not been configured',
     ({ name }) => {
       const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, 'default');
@@ -176,6 +179,25 @@ describe('Install and usage', () => {
 
         expect(Number(match.groups?.major)).toBeGreaterThan(6);
       });
+    });
+  });
+
+  describe('in a yarn berry project', () => {
+    let testProject: TestProject;
+    let result: string;
+
+    beforeAll(async () => {
+      testProject = await setupTestProject({
+        packageManager: 'yarn@3.2.1',
+      });
+      await human(`yarn init -2`, { cwd: testProject.projectPath });
+      result = await human(`yarn -v`, {
+        cwd: testProject.projectPath,
+      });
+    });
+
+    it('prints yarn berry version', () => {
+      expect(result).toBe('3.2.1');
     });
   });
 });

@@ -6,12 +6,14 @@ import * as installer from './installer';
 import * as config from './config';
 import * as logger from './logger';
 import * as inspector from './inspector';
-import { getDefaultVersion } from './defaults';
+import * as specLib from './spec';
+import * as global from './global';
+import * as filesystem from './filesystem';
 
-export async function runPackageManager(packageManager: string) {
-  if (!config.isSupportedPackageManager(packageManager)) {
+export async function runPackageManager(packageManagerName: string) {
+  if (!specLib.isSupportedPackageManager(packageManagerName)) {
     logger.friendly(
-      `"${packageManager}" is not supported. Supported: [${config.SUPPORTED_PACKAGE_MANAGERS.join(
+      `"${packageManagerName}" is not supported. Supported: [${config.SUPPORTED_PACKAGE_MANAGERS.join(
         ', '
       )}]`
     );
@@ -21,7 +23,7 @@ export async function runPackageManager(packageManager: string) {
   let { spec, packageJSONPath } =
     (await inspector.findPackageManagerSpec()) ?? {};
 
-  if (spec && spec.name !== packageManager) {
+  if (spec && spec.name !== packageManagerName) {
     const relativePath = path.relative(process.cwd(), packageJSONPath!);
     logger.userError(`This project is configured to use ${spec.name}.`);
     logger.info(`See "packageManager" field in ./${relativePath}`);
@@ -29,15 +31,28 @@ export async function runPackageManager(packageManager: string) {
   }
 
   if (!spec) {
-    const defaultVersion = await getDefaultVersion(packageManager);
-    spec = { name: packageManager, version: defaultVersion };
+    const defaultVersion = await global.getDefaultVersion(packageManagerName);
+    spec = { name: packageManagerName, version: defaultVersion };
   }
 
-  const { installPath } = await installer.install({ spec });
+  if (
+    spec.name === 'yarn' &&
+    specLib.parseVersionString(spec.version).major >= 2
+  ) {
+    const defaultVersion = await global.getDefaultVersion(packageManagerName);
+    spec = { name: 'yarn', version: defaultVersion };
+  }
+
+  await installer.install({ spec });
+
+  const executablePath = await filesystem.getExecutablePath({
+    spec,
+    executableName: packageManagerName,
+  });
 
   const [nodePath, _shimPath, ...argvRest] = process.argv;
 
-  spawnSync(nodePath, [installPath, ...argvRest], {
+  spawnSync(nodePath, [executablePath, ...argvRest], {
     stdio: 'inherit',
     env: process.env,
   });

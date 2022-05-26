@@ -1,85 +1,100 @@
 import * as installer from './installer';
-import fs from 'node:fs/promises';
-import { PackageManagerSpec } from './config';
+import { PackageManagerSpec } from './spec';
+import * as filesystem from './filesystem';
+import * as registry from './registry';
+import { PackageJson } from '@npm/types';
 
 jest.setTimeout(10 * 10000);
 
-const versionMatcher = expect.stringMatching(/^\d+\.\d+\.\d+$/);
+jest.mock('./filesystem');
+jest.mock('./registry');
+
+const { mocked } = jest;
+
+const pkg: PackageJson = {
+  name: 'mock-package',
+  version: '0.0.0',
+};
+const spec: PackageManagerSpec = {
+  name: 'pnpm',
+  version: '0.0.0',
+};
+const missingPackageError = new Error(`💣 unable to read package`);
+
+let cachedPkg: PackageJson | undefined;
 
 describe('installer', () => {
-  describe('install', () => {
-    describe('pnpm', () => {
-      it('works', async () => {
-        const spec: PackageManagerSpec = {
-          name: 'pnpm',
-          version: '6.32.9',
-        };
-        const installPath = installer.getInstallPath(spec);
+  let result: Awaited<ReturnType<typeof installer.install>>;
 
-        // expect download
-        const result1 = await installer.install({
-          spec,
-          skipCache: true,
-        });
-
-        expect(result1.usedCache).toBe(false);
-
-        // expect cache
-        const result2 = await installer.install({
-          spec,
-        });
-
-        expect(result2.usedCache).toBe(true);
-
-        // expect download again
-        await fs.rm(installPath, { force: true, recursive: true });
-        const result3 = await installer.install({
-          spec,
-        });
-
-        expect(result3.usedCache).toBe(false);
-      });
-    });
-    describe('npm', () => {
-      it('works', async () => {
-        const spec: PackageManagerSpec = {
-          name: 'npm',
-          version: '8.0.0',
-        };
-        const installPath = installer.getInstallPath(spec);
-
-        // expect download
-        const result1 = await installer.install({
-          spec,
-          skipCache: true,
-        });
-
-        expect(result1.usedCache).toBe(false);
-
-        // expect cache
-        const result2 = await installer.install({
-          spec,
-        });
-
-        expect(result2.usedCache).toBe(true);
-
-        // expect download again
-        await fs.rm(installPath, { force: true, recursive: true });
-        const result3 = await installer.install({
-          spec,
-        });
-
-        expect(result3.usedCache).toBe(false);
-      });
+  beforeEach(() => {
+    cachedPkg = undefined;
+    jest.resetAllMocks();
+    mocked(filesystem).readPackageFromCache.mockImplementation(
+      async (_spec: any, { throwOnMissing = false } = {}) => {
+        if (!cachedPkg && throwOnMissing) throw missingPackageError;
+        return cachedPkg;
+      }
+    );
+    mocked(registry).downloadPackage.mockImplementation(async () => {
+      cachedPkg = pkg;
     });
   });
 
-  describe('getLatestVersion()', () => {
-    it('works for pnpm', async () => {
-      const result1 = await installer.getLatestVersion('pnpm');
+  describe('install', () => {
+    describe('when pm exists in cache', () => {
+      beforeEach(async () => {
+        cachedPkg = pkg;
+        result = await installer.install({ spec });
+      });
 
-      expect(result1).toEqual({
-        version: versionMatcher,
+      it('returns cached result', () => {
+        expect(result).toEqual({ usedCache: true });
+      });
+
+      it('does not attempt to download the package', () => {
+        expect(registry.downloadPackage).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('when pm does not exists in cache', () => {
+      beforeEach(async () => {
+        cachedPkg = undefined;
+
+        result = await installer.install({ spec });
+      });
+
+      it('returns installed result', () => {
+        expect(result).toEqual({ usedCache: false });
+      });
+
+      it('downloads the package', () => {
+        expect(registry.downloadPackage).toHaveBeenCalledWith(spec);
+      });
+
+      it('validates that package exists', () => {
+        expect(filesystem.readPackageFromCache).toHaveBeenCalledWith(spec, {
+          throwOnMissing: true,
+        });
+      });
+    });
+
+    describe('when pm is downloaded but can not be read', () => {
+      let errorResult: any;
+      beforeEach(async () => {
+        cachedPkg = undefined;
+        mocked(registry).downloadPackage.mockImplementation(async () => {
+          cachedPkg = undefined;
+        });
+        errorResult = await installer.install({ spec }).then(
+          () => {
+            throw new Error('expected function to ');
+          },
+          (error) => error
+        );
+      });
+
+      it('throws error', () => {
+        expect(errorResult).toBe(missingPackageError);
       });
     });
   });

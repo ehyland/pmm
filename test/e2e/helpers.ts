@@ -20,11 +20,13 @@ export type TestProject = Awaited<ReturnType<typeof setupTestProject>>;
 
 const { LOCAL_NPM_REGISTRY, IS_RUNNING_IN_TEST_CONTAINER } = process.env;
 
+let testProjectCount = 0;
+
 export async function setupTestProject({
-  subDir,
+  subDir = `test-project-${testProjectCount++}`,
   packageManager,
 }: {
-  subDir: string;
+  subDir?: string;
   packageManager?: string;
 }) {
   const projectPath = path.resolve(WORKSPACE_PATH, subDir);
