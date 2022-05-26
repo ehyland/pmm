@@ -40,16 +40,6 @@ export function parseSpecString(specString: string): PackageManagerSpec {
     );
   }
 
-  const versionObject = parseVersionString(version);
-
-  if (packageManager === 'yarn' && Number(versionObject.major) > 1) {
-    throw new Error(
-      `Yarn berry (>=2) is executed via yarn classic (=1). 
-As yarn berry cli is committed to the codebase, so all we need to track is the wrapping yarn classic version.
-Please update "packageManager" field to point to a yarn classic version. e.g. "yarn@1.22.18"`
-    );
-  }
-
   return { name: packageManager, version };
 }
 

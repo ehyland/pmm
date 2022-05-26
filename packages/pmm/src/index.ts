@@ -35,6 +35,14 @@ export async function runPackageManager(packageManagerName: string) {
     spec = { name: packageManagerName, version: defaultVersion };
   }
 
+  if (
+    spec.name === 'yarn' &&
+    specLib.parseVersionString(spec.version).major >= 2
+  ) {
+    const defaultVersion = await global.getDefaultVersion(packageManagerName);
+    spec = { name: 'yarn', version: defaultVersion };
+  }
+
   await installer.install({ spec });
 
   const executablePath = await filesystem.getExecutablePath({

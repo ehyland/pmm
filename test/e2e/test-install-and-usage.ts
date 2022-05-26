@@ -180,56 +180,24 @@ describe('Install and usage', () => {
         expect(Number(match.groups?.major)).toBeGreaterThan(6);
       });
     });
+  });
 
-    describe('when packageManager is set to yarn@3', () => {
-      let testProject: TestProject;
-      let errorResult: any;
+  describe('in a yarn berry project', () => {
+    let testProject: TestProject;
+    let result: string;
 
-      beforeAll(async () => {
-        testProject = await setupTestProject({ packageManager: 'yarn@3.2.1' });
-        errorResult = await callAndCatch(() =>
-          human(`yarn -v`, {
-            cwd: testProject.projectPath,
-          })
-        );
+    beforeAll(async () => {
+      testProject = await setupTestProject({
+        packageManager: 'yarn@3.2.1',
       });
-
-      it('rejects with descriptive message', () => {
-        expect(errorResult.all).toEqual(
-          expect.stringContaining(
-            `Yarn berry (>=2) is executed via yarn classic (=1)`
-          )
-        );
-        expect(errorResult.all).toEqual(
-          expect.stringContaining(
-            `As yarn berry cli is committed to the codebase, so all we need to track is the wrapping yarn classic version`
-          )
-        );
-        expect(errorResult.all).toEqual(
-          expect.stringContaining(
-            `Please update "packageManager" field to point to a yarn classic version. e.g. "yarn@1.22.18"`
-          )
-        );
+      await human(`yarn init -2`, { cwd: testProject.projectPath });
+      result = await human(`yarn -v`, {
+        cwd: testProject.projectPath,
       });
     });
 
-    describe('in a yarn berry project', () => {
-      let testProject: TestProject;
-      let result: string;
-
-      beforeAll(async () => {
-        testProject = await setupTestProject({
-          packageManager: 'yarn@1.22.18',
-        });
-        await human(`yarn init -2`, { cwd: testProject.projectPath });
-        result = await human(`yarn -v`, {
-          cwd: testProject.projectPath,
-        });
-      });
-
-      it('prints yarn berry version', () => {
-        expect(result).toMatchInlineSnapshot();
-      });
+    it('prints yarn berry version', () => {
+      expect(result).toBe('3.2.1');
     });
   });
 });
