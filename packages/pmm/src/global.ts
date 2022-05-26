@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import * as config from './config';
-import * as installer from './installer';
+import * as registry from './registry';
 import * as logger from './logger';
 import * as specLib from './spec';
 
@@ -12,7 +12,7 @@ export async function getDefaultVersion(name: config.PackageManagerName) {
     return version;
   }
 
-  const latest = await installer.getLatestVersion(name);
+  const latest = await registry.getLatestVersion(name);
 
   await saveDefaultToFile({ name, version: latest.version });
 

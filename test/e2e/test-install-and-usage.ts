@@ -47,6 +47,7 @@ describe('Install and usage', () => {
       'npm',
       'pmm',
       'pnpm',
+      'yarn',
     ]);
   });
 

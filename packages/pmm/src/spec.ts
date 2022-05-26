@@ -52,3 +52,7 @@ Please update "packageManager" field to point to a yarn classic version. e.g. "y
 
   return { name: packageManager, version };
 }
+
+export function stringify(spec: PackageManagerSpec) {
+  return `${spec.name}@${spec.version}`;
+}
