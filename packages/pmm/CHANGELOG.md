@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.5.0
+
+### Minor Changes
+
+- d7933e5: Add pmm update-self command
+
 ## 0.4.0
 
 ### Minor Changes
