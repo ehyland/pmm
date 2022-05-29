@@ -26,26 +26,54 @@ echo "Using registry $registry"
 package_scope="@ehyland/"
 package_name="pmm"
 package_name_full="$package_scope$package_name"
-parse_json_script="
+extract_package_from_manifest_script="
   let dataString = '';
   process.stdin.setEncoding('utf8')
     .on('data', (chunk) => dataString+=chunk )
     .on('end', () => {
       const manifest = JSON.parse(dataString);
       const latest = manifest['dist-tags']['latest'];
-      const tarball = manifest['versions'][latest]['dist']['tarball'];
+      const pkg = manifest['versions'][latest];
+      console.log(JSON.stringify(pkg));
+    })
+"
+extract_tarball_from_package="
+  let dataString = '';
+  process.stdin.setEncoding('utf8')
+    .on('data', (chunk) => dataString+=chunk )
+    .on('end', () => {
+      const pkg = JSON.parse(dataString);
+      const tarball = pkg['dist']['tarball'];
       console.log(tarball);
     })
 "
 
+extract_version_from_package="
+  let dataString = '';
+  process.stdin.setEncoding('utf8')
+    .on('data', (chunk) => dataString+=chunk )
+    .on('end', () => {
+      const pkg = JSON.parse(dataString);
+      const version = pkg['version'];
+      console.log(version);
+    })
+"
+
 manifest=$(curl -fsSL "${registry}/${package_name_full}")
-tarball=$(echo "$manifest" | node -e "$parse_json_script")
+package=$(echo "$manifest" | node -e "$extract_package_from_manifest_script")
+version=$(echo "$package" | node -e "$extract_version_from_package")
+tarball=$(echo "$package" | node -e "$extract_tarball_from_package")
+
+echo "Downloading pmm@${version}"
 
 curl -fsSL "${tarball}" | tar -C "$PMM_PACKAGE_PATH" -xz --strip 1
 
 chmod -R +x "$PMM_PACKAGE_PATH/bin/"
 
 echo "Installed to $PMM_DIR"
+echo ''
+echo 'To Complete Installation'
+echo '------------------------'
 echo 'Add the following to your ~/.bashrc'
 echo '  export PMM_DIR="$HOME/.pmm"'
 echo '  [ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims'

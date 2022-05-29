@@ -8,6 +8,7 @@ import * as inspector from './inspector';
 import * as specLib from './spec';
 import packageHelper from '@npmcli/package-json';
 import pkg from '../package.json';
+import execa from 'execa';
 
 const cli = sade('pmm');
 cli.version(pkg.version);
@@ -91,5 +92,14 @@ cli
       await global.updateDefault(spec);
     })
   );
+
+cli.command('update-self', 'Update pmm itself').action(
+  handler(async () => {
+    await execa.command(
+      `curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash`,
+      { shell: '/bin/bash', stdio: 'inherit' }
+    );
+  })
+);
 
 cli.parse(process.argv);
