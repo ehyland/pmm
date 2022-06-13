@@ -10,7 +10,10 @@ import * as specLib from './spec';
 import * as global from './global';
 import * as filesystem from './filesystem';
 
-export async function runPackageManager(packageManagerName: string) {
+export async function runPackageManager(
+  packageManagerName: string,
+  executableName = packageManagerName
+) {
   if (!specLib.isSupportedPackageManager(packageManagerName)) {
     logger.friendly(
       `"${packageManagerName}" is not supported. Supported: [${config.SUPPORTED_PACKAGE_MANAGERS.join(
@@ -47,7 +50,7 @@ export async function runPackageManager(packageManagerName: string) {
 
   const executablePath = await filesystem.getExecutablePath({
     spec,
-    executableName: packageManagerName,
+    executableName,
   });
 
   const [nodePath, _shimPath, ...argvRest] = process.argv;
