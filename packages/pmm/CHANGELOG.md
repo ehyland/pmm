@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.6.0
+
+### Minor Changes
+
+- 4249487: Add npx & pnpx shims
+
 ## 0.5.0
 
 ### Minor Changes
