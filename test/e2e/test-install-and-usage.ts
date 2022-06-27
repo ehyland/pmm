@@ -45,8 +45,10 @@ describe('Install and usage', () => {
   it('shims & pmm cli to bin path', async () => {
     expect((await fs.readdir(PMM_BIN_PATH)).sort()).toEqual([
       'npm',
+      'npx',
       'pmm',
       'pnpm',
+      'pnpx',
       'yarn',
     ]);
   });
@@ -198,6 +200,54 @@ describe('Install and usage', () => {
 
     it('prints yarn berry version', () => {
       expect(result).toBe('3.2.1');
+    });
+  });
+
+  describe('npx', () => {
+    let result: string;
+
+    beforeAll(async () => {
+      const testProject = await setupTestProject({});
+      result = await human(`npx -y cowsay@1.5.0 How good is pmm!`, {
+        cwd: testProject.projectPath,
+      });
+    });
+
+    it('runs the cowsay cli', () => {
+      expect(result).toMatchInlineSnapshot(`
+        " __________________
+        < How good is pmm! >
+         ------------------
+                \\\\   ^__^
+                 \\\\  (oo)\\\\_______
+                    (__)\\\\       )\\\\/\\\\
+                        ||----w |
+                        ||     ||"
+      `);
+    });
+  });
+
+  describe('pnpx', () => {
+    let result: execa.ExecaReturnValue<string>;
+
+    beforeAll(async () => {
+      const testProject = await setupTestProject({});
+      result = await shell(`pnpx cowsay@1.5.0 Yeah not bad m8`, {
+        cwd: testProject.projectPath,
+      });
+    });
+
+    it('runs the cowsay cli', () => {
+      expect(result.stdout).toMatchInlineSnapshot(`
+        " _________________
+        < Yeah not bad m8 >
+         -----------------
+                \\\\   ^__^
+                 \\\\  (oo)\\\\_______
+                    (__)\\\\       )\\\\/\\\\
+                        ||----w |
+                        ||     ||"
+      `);
     });
   });
 });

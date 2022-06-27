@@ -88,7 +88,7 @@ export async function resetBashRc() {
 }
 
 export async function setNpmRegistry() {
-  await human(`npm set registry ${LOCAL_NPM_REGISTRY}`, {
+  await human(`npm set registry ${LOCAL_NPM_REGISTRY} --global`, {
     log: true,
     cwd: HOME,
   });
