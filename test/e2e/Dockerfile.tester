@@ -7,13 +7,19 @@ RUN apk add --no-cache \
   jq
 
 # create workspace
-RUN mkdir /app \
+RUN mkdir -p \
+  /app \
+  /usr/local/etc \
   && chown -R node:node /app
 
 # allow global npm installs from user node (don't do this for a prod image)
 RUN chown -R node:node \
+  # Allow global installs as user
   /usr/local/lib/node_modules/ \
   /usr/local/bin/ \
+  # Allow setting global npm settings 
+  /usr/local/etc \
+  # Codebase
   /app/
 
 USER node
@@ -32,4 +38,5 @@ COPY --chown=node:node . /app/
 RUN pnpm install --prefer-offline
 
 ENV IS_RUNNING_IN_TEST_CONTAINER="true"
+
 
