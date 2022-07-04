@@ -1,5 +1,3 @@
-# TODO: add npm registry
-
 services:
   # Local NPM registry
   registry:
