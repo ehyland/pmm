@@ -3,7 +3,7 @@
 services:
   # Local NPM registry
   registry:
-    image: verdaccio/verdaccio:5.10.2
+    image: verdaccio/verdaccio:5.13.1
     environment:
       - VERDACCIO_PORT=48733
     volumes:
