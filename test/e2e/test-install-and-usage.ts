@@ -22,6 +22,9 @@ import {
 
 jest.setTimeout(ms('20 seconds'));
 
+const SPEC_RX =
+  /(?<name>(pnpm|npm|yarn))@(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/;
+
 beforeAll(async () => {
   await assertValidTestEnvironment();
   await resetBashRc();
@@ -180,6 +183,61 @@ describe('Install and usage', () => {
         )!;
 
         expect(Number(match.groups?.major)).toBeGreaterThan(6);
+      });
+    });
+  });
+
+  describe('pmm pin <manager> <path>', () => {
+    describe('when called in a directory without pm spec', () => {
+      let testProject: TestProject;
+      let result: string;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({ subDir: 'not-configured' });
+        result = await human(`pmm pin pnpm .`, {
+          cwd: testProject.projectPath,
+        });
+      });
+
+      it('writes success message', () => {
+        const messageRx = new RegExp(`🎁  Pinned ${SPEC_RX.source}`);
+        expect(result).toMatch(messageRx);
+        expect(messageRx.exec(result)?.groups?.name).toBe('pnpm');
+        expect(
+          Number(messageRx.exec(result)?.groups?.major)
+        ).toBeGreaterThanOrEqual(7);
+      });
+
+      it('writes packageManager field', async () => {
+        const { packageManager } = await loadPackageJson(
+          testProject.packageFilePath
+        );
+
+        const rx = new RegExp(`^${SPEC_RX.source}$`);
+        const match = rx.exec(packageManager)!;
+
+        expect(match.groups?.name).toBe('pnpm');
+        expect(Number(match.groups?.major)).toBeGreaterThanOrEqual(7);
+      });
+    });
+
+    describe('when called in a directory without package', () => {
+      let testProject: TestProject;
+      let error: execa.ExecaError;
+
+      beforeAll(async () => {
+        testProject = await setupTestProject({ subDir: 'not-configured' });
+        error = await callAndCatch(() =>
+          human(`pmm pin pnpm ./some-random-subpath`, {
+            cwd: testProject.projectPath,
+          })
+        );
+      });
+
+      it('exits with error', () => {
+        expect(error.all).toBe(
+          `⚠️  Sorry, "package.json" not found in ./some-random-subpath`
+        );
       });
     });
   });

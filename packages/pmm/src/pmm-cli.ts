@@ -102,4 +102,45 @@ cli.command('update-self', 'Update pmm itself').action(
   })
 );
 
+cli
+  .command(
+    'pin <package-manager> <path-to-package>',
+    'Write packageManager field to package.json'
+  )
+  .action(
+    handler(async (packageManagerName: string, inputPath: string) => {
+      if (!specLib.isSupportedPackageManager(packageManagerName)) {
+        logger.userError(`Sorry, "${packageManagerName}" is not yet supported`);
+        process.exit(1);
+      }
+
+      const absoluteInputPath = path.resolve(inputPath);
+      const packageDir = absoluteInputPath.endsWith('package.json')
+        ? path.dirname(absoluteInputPath)
+        : absoluteInputPath;
+
+      if (!(await inspector.checkPackageExists(packageDir))) {
+        logger.userError(
+          `Sorry, "package.json" not found in ./${path.relative(
+            process.cwd(),
+            packageDir
+          )}`
+        );
+        process.exit(1);
+      }
+
+      const latest = await registry.getLatestVersion(packageManagerName);
+
+      const pkg = await packageHelper.load(packageDir);
+
+      pkg.update({
+        packageManager: `${packageManagerName}@${latest.version}`,
+      });
+
+      await pkg.save();
+
+      logger.friendly(`Pinned ${packageManagerName}@${latest.version}`);
+    })
+  );
+
 cli.parse(process.argv);
