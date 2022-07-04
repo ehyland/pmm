@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.7.0
+
+### Minor Changes
+
+- 8751d77: Add `pmm pin <name> <path>` command
+
 ## 0.6.0
 
 ### Minor Changes
