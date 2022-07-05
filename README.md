@@ -2,17 +2,17 @@
 
 Just like corepack, plus
 
+🔥 &nbsp; Better [fnm](https://github.com/Schniz/fnm/issues/566) support.
+
 🔥 &nbsp; `pmm update-local` update `packageManager` for your local project
 
 🔥 &nbsp; `pmm update-default <package-manager> [version]` update the global fallback version
 
-🔥 &nbsp; Installs package managers from configurable registry with `PMM_NPM_REGISTRY`
+🔥 &nbsp; `pmm pin <package-manager> <path>` add `packageManager` field to your package
 
-What's missing
+🔥 &nbsp; Installs package managers from your configured npm registry (or set `PMM_NPM_REGISTRY` to use an alternative)
 
-⏲️ &nbsp; No Windows support (will consider, on request)
-
-> ⚠️ &nbsp; This is early release. There are more feature to add, edges to smooth. But it's already a delight to use
+> ⏲️ &nbsp; No Windows support at this point (happy to accept a pull request)
 
 ## Install
 
@@ -28,7 +28,7 @@ e.g.
 
 ```json
 {
-  "packageManager": "pnpm@6.32.11"
+  "packageManager": "pnpm@7.5.0"
 }
 ```
 
