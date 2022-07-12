@@ -7,6 +7,7 @@ export const HOME = os.homedir();
 export const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
 export const BASH_RC_LOAD_SCRIPT = `
 export PMM_DIR="$HOME/.pmm"
+export PMM_NPM_REGISTRY="http://localhost:48733"
 [ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
 `;
 
@@ -109,8 +110,9 @@ export async function cleanup() {
 }
 
 export async function installPmm() {
-  await human('cat ./install.sh | bash', { log: true });
+  const output = await human('cat ./install.sh | bash', { log: true });
   await fs.writeFile(BASH_RC_FILE, BASH_RC_LOAD_SCRIPT, 'utf8');
+  return output;
 }
 
 export async function callAndCatch(fn: (...args: any[]) => Promise<any>) {

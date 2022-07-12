@@ -36,8 +36,22 @@ afterAll(async () => {
 });
 
 describe('Install and usage', () => {
+  let installOutput: string;
+
   beforeAll(async () => {
-    await installPmm();
+    installOutput = await installPmm();
+  });
+
+  it('logs useful output', () => {
+    const match = installOutput.match(/To Complete Installation(.|\n)*/m);
+    expect(match?.[0]).toMatchInlineSnapshot(`
+      "To Complete Installation
+      ------------------------
+      Add the following to your ~/.bashrc
+        export PMM_DIR=\\"$HOME/.pmm\\"
+        export PMM_NPM_REGISTRY=\\"http://localhost:48733\\"
+        [ -s \\"$PMM_DIR/package/enable.sh\\" ] && \\\\. \\"$PMM_DIR/package/enable.sh\\"  # This loads pmm shims"
+    `);
   });
 
   it('adds pmm bin to path', async () => {
