@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.8.0
+
+### Minor Changes
+
+- 377b5f7: Suggest setting PMM_NPM_REGISTRY in install script
+
 ## 0.7.0
 
 ### Minor Changes
