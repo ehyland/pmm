@@ -264,7 +264,9 @@ describe('Install and usage', () => {
       testProject = await setupTestProject({
         packageManager: 'yarn@3.2.1',
       });
-      await human(`yarn init -2`, { cwd: testProject.projectPath });
+      await human(`yarn set version 3.2.1`, {
+        cwd: testProject.projectPath,
+      });
       result = await human(`yarn -v`, {
         cwd: testProject.projectPath,
       });
