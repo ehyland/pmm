@@ -3,6 +3,7 @@
 - [Setup](#setup)
 - [Building `pmm`](#building-pmm)
 - [Running tests](#running-tests)
+- [Manual Testing in development](#manual-testing-in-development)
 - [Creating a production release](#creating-a-production-release)
 
 > **Note: Draft document**
@@ -45,6 +46,19 @@ pnpm test:e2e
 # Run e2e tests in watch move (run second command in another terminal)
 pnpm test:e2e:watch
 pnpm build:watch:release
+```
+
+## Manual Testing in development
+
+```shell
+# Build pmm
+pnpm build
+
+# Run the locally built executables
+./bin/pmm
+./bin/pnpm
+./bin/yarn
+./bin/npm
 ```
 
 ## Creating a production release
