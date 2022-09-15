@@ -27,10 +27,15 @@ export async function runPackageManager(
     (await inspector.findPackageManagerSpec()) ?? {};
 
   if (spec && spec.name !== packageManagerName) {
-    const relativePath = path.relative(process.cwd(), packageJSONPath!);
-    logger.userError(`This project is configured to use ${spec.name}.`);
-    logger.info(`See "packageManager" field in ./${relativePath}`);
-    process.exit(1);
+    if (config.PMM_IGNORE_SPEC_MISS_MATCH) {
+      spec = undefined;
+      packageJSONPath = undefined;
+    } else {
+      const relativePath = path.relative(process.cwd(), packageJSONPath!);
+      logger.userError(`This project is configured to use ${spec.name}.`);
+      logger.info(`See "packageManager" field in ./${relativePath}`);
+      process.exit(1);
+    }
   }
 
   if (!spec) {
@@ -57,6 +62,6 @@ export async function runPackageManager(
 
   spawnSync(nodePath, [executablePath, ...argvRest], {
     stdio: 'inherit',
-    env: process.env,
+    env: { ...process.env, PMM_IGNORE_SPEC_MISS_MATCH: '1' },
   });
 }
