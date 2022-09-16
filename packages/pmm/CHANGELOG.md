@@ -1,5 +1,15 @@
 # @ehyland/pmm
 
+## 0.8.1
+
+### Patch Changes
+
+- 6018758: Allow alternative package manager to be called in child process
+
+  Use case:
+
+  With `pnpm changeset publish` , changesets CLI will attempt to run npm tp get npm configuration. This should not be blocked by pmm in a project that is configured to use pnpm
+
 ## 0.8.0
 
 ### Minor Changes
