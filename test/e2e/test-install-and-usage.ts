@@ -324,4 +324,25 @@ describe('Install and usage', () => {
       `);
     });
   });
+
+  describe('when a package manager is called as a child process', () => {
+    let result: execa.ExecaReturnValue<string>;
+
+    beforeAll(async () => {
+      const testProject = await setupTestProject({
+        packageManager: 'pnpm@7.5.1',
+        scripts: {
+          'get-npm-version': 'npm --version',
+        },
+      });
+
+      result = await shell(`pnpm run get-npm-version`, {
+        cwd: testProject.projectPath,
+      });
+    });
+
+    it('allows npm to be called', () => {
+      expect(result.stdout).toMatch(/\d+\.\d+\.\d+/);
+    });
+  });
 });

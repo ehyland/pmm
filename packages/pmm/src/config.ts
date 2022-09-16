@@ -9,4 +9,8 @@ export const REGISTRY =
 export const PMM_DIR =
   process.env.PMM_DIR ?? path.resolve(os.homedir(), '.pmm-fallback-dir');
 
+export const PMM_IGNORE_SPEC_MISS_MATCH = /(yes|true|1)/i.test(
+  process.env.PMM_IGNORE_SPEC_MISS_MATCH ?? ''
+);
+
 export type PackageManagerName = typeof SUPPORTED_PACKAGE_MANAGERS[number];

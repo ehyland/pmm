@@ -26,16 +26,18 @@ let testProjectCount = 0;
 export async function setupTestProject({
   subDir = `test-project-${testProjectCount++}`,
   packageManager,
+  scripts = {},
 }: {
   subDir?: string;
   packageManager?: string;
+  scripts?: Record<string, string>;
 }) {
   const projectPath = path.resolve(WORKSPACE_PATH, subDir);
   const packageFilePath = path.resolve(projectPath, 'package.json');
   await fs.mkdir(projectPath, { recursive: true });
   await fs.writeFile(
     packageFilePath,
-    JSON.stringify({ packageManager: packageManager })
+    JSON.stringify({ packageManager: packageManager, scripts })
   );
   return { projectPath, packageFilePath };
 }
