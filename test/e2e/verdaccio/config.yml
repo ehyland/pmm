@@ -19,12 +19,12 @@ uplinks:
 packages:
   '@ehyland/*':
     access: $all
-    publish: $anonymous
+    publish: $all
     unpublish: $authenticated
 
   '@*/*':
     access: $all
-    publish: $authenticated
+    publish: $all
     unpublish: $authenticated
     proxy: npmjs
 
