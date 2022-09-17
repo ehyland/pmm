@@ -9,6 +9,7 @@ trap clean_up EXIT
 
 # export for use in docker-compose.yml
 export NODE_TEST_VERSION="${NODE_TEST_VERSION:-16}"
+export APP_UID=`id -u`
 
 BUILD_WATCH="${BUILD_WATCH:-}"
 EXTRA_JEST_ARGS=""

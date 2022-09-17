@@ -1,0 +1,23 @@
+FROM node:16.15.0-alpine
+
+ARG APP_UID=1000
+
+RUN apk add --no-cache \
+  bash \
+  curl \
+  jq \
+  shadow
+
+# create user workspace
+RUN usermod -u ${APP_UID} node || true \
+  && mkdir /app \
+  && chown -R node:node \
+  /app \
+  # allow global npm installs from user node (don't do this for a prod image)
+  /usr/local/lib/node_modules/ \
+  /usr/local/bin/ 
+
+USER node
+WORKDIR /app
+
+RUN npm i -g verdaccio@5.15.3
