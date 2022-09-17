@@ -31,6 +31,10 @@ jobs:
 
       - uses: ./.github/actions/setup
 
+      - uses: actions/cache@v3
+        with:
+          path: test/e2e/verdaccio/storage/data
+
       - run: pnpm test:e2e
         env:
           NODE_TEST_VERSION: ${{ matrix.version }}
