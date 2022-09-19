@@ -36,7 +36,7 @@ jobs:
           path: ./test/e2e/verdaccio/storage/data
           key: ${{ runner.os }}-verdaccio
 
-      - run: ls -la test/e2e/verdaccio/storage/data
+      - run: ls -la ./test/e2e/verdaccio/storage/data
 
       - run: pnpm test:e2e
         env:
