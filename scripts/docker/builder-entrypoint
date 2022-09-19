@@ -3,6 +3,6 @@
 set -euo pipefail
 
 echo '' >> ~/.npmrc
-echo '//localhost:48733/:_authToken="UD01Rx8ayrGbTz3KMkk8Hg=="' >> ~/.npmrc
+echo '//localhost:48733/:_authToken="T/ZceTDgZFqHEFyzQ5DE0A=="' >> ~/.npmrc
 
 scripts/release-local
