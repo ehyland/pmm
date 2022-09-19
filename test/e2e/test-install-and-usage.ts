@@ -48,9 +48,9 @@ describe('Install and usage', () => {
       "To Complete Installation
       ------------------------
       Add the following to your ~/.bashrc
-        export PMM_DIR=\\"$HOME/.pmm\\"
-        export PMM_NPM_REGISTRY=\\"http://localhost:48733\\"
-        [ -s \\"$PMM_DIR/package/enable.sh\\" ] && \\\\. \\"$PMM_DIR/package/enable.sh\\"  # This loads pmm shims"
+        export PMM_DIR="$HOME/.pmm"
+        export PMM_NPM_REGISTRY="http://localhost:48733"
+        [ -s "$PMM_DIR/package/enable.sh" ] && \\. "$PMM_DIR/package/enable.sh"  # This loads pmm shims"
     `);
   });
 
@@ -292,9 +292,9 @@ describe('Install and usage', () => {
         " __________________
         < How good is pmm! >
          ------------------
-                \\\\   ^__^
-                 \\\\  (oo)\\\\_______
-                    (__)\\\\       )\\\\/\\\\
+                \\   ^__^
+                 \\  (oo)\\_______
+                    (__)\\       )\\/\\
                         ||----w |
                         ||     ||"
       `);
@@ -316,9 +316,9 @@ describe('Install and usage', () => {
         " _________________
         < Yeah not bad m8 >
          -----------------
-                \\\\   ^__^
-                 \\\\  (oo)\\\\_______
-                    (__)\\\\       )\\\\/\\\\
+                \\   ^__^
+                 \\  (oo)\\_______
+                    (__)\\       )\\/\\
                         ||----w |
                         ||     ||"
       `);
