@@ -41,3 +41,5 @@ jobs:
       - run: pnpm test:e2e
         env:
           NODE_TEST_VERSION: ${{ matrix.version }}
+
+      - run: ls -la ./test/e2e/verdaccio/storage/data
