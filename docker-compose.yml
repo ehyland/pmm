@@ -6,7 +6,7 @@ services:
       - VERDACCIO_UID
       - VERDACCIO_PORT
     volumes:
-      - ./test/e2e/verdaccio/storage/data:/app/storage/data
+      - ./test/e2e/verdaccio/storage/data:/verdaccio/storage/data
     ports:
       - ${VERDACCIO_PORT}:${VERDACCIO_PORT}
 
