@@ -1,13 +1,14 @@
 services:
   # Local NPM registry
   registry:
-    image: verdaccio/verdaccio:5.15.3
+    image: ehyland/verdaccio-test:5.15.3
     environment:
-      - VERDACCIO_PORT=48733
+      - VERDACCIO_UID
+      - VERDACCIO_PORT
     volumes:
-      - ./test/e2e/verdaccio.config.yml:/verdaccio/conf/config.yaml
+      - ./test/e2e/verdaccio/storage/data:/verdaccio/storage/data
     ports:
-      - 48733:48733
+      - ${VERDACCIO_PORT}:${VERDACCIO_PORT}
 
   # For building and publishing to a local registry
   builder:
