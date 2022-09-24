@@ -12,15 +12,7 @@ runs:
         node-version: 16
         cache: pnpm
 
-    - name: Install docker-compose v2 (GH actions used v1 by default)
-      shell: bash
-      run: |
-        VERSION="v2.5.1"
-        INSTALL_PATH="$HOME/.local/bin/docker-compose"
-        DOWNLOAD_URL="https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)"
-        mkdir -p "$(dirname $INSTALL_PATH)" || true
-        curl -fsSL "$DOWNLOAD_URL" -o "$INSTALL_PATH"
-        chmod +x "$INSTALL_PATH"
+    - uses: ehyland/actions/install-docker-compose-v2@main
 
     - run: pnpm install
       shell: bash
