@@ -26,7 +26,10 @@ export async function downloadPackage(spec: PackageManagerSpec) {
 
   logger.debug(`Downloading archive`);
 
-  await streamPipeline(response, tar.extract({ strip: 1, cwd: installPath }));
+  await streamPipeline(
+    response.body!,
+    tar.extract({ strip: 1, cwd: installPath })
+  );
 }
 
 export async function getLatestVersion(packageManagerName: string) {
