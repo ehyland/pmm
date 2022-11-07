@@ -4,6 +4,7 @@ module.exports = {
   testMatch: ['<rootDir>/packages/**/*.test.(ts|tsx)'],
   testEnvironment: 'node',
   clearMocks: true,
+  transformIgnorePatterns: [],
   watchPlugins: [
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
