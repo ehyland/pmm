@@ -55,7 +55,7 @@ importers:
   packages/pmm:
     specifiers:
       '@npm/types': ^1.0.2
-      '@npmcli/package-json': ^2.0.0
+      '@npmcli/package-json': ^3.0.0
       '@types/node': ^18.7.18
       '@types/tar': ^6.1.2
       debug: ^4.3.4
@@ -69,7 +69,7 @@ importers:
       node-fetch: 3.2.10
     devDependencies:
       '@npm/types': 1.0.2
-      '@npmcli/package-json': 2.0.0
+      '@npmcli/package-json': 3.0.0
       '@types/node': 18.7.18
       '@types/tar': 6.1.2
       debug: 4.3.4
@@ -1949,11 +1949,11 @@ packages:
     resolution: {integrity: sha512-KXZccTDEnWqNrrx6JjpJKU/wJvNeg9BDgjS0XhmlZab7br921HtyVbsYzJr4L+xIvjdJ20Wh9dgxgCI2a5CEQw==}
     dev: true
 
-  /@npmcli/package-json/2.0.0:
-    resolution: {integrity: sha512-42jnZ6yl16GzjWSH7vtrmWyJDGVa/LXPdpN2rcUWolFjc9ON2N3uz0qdBbQACfmhuJZ2lbKYtmK5qx68ZPLHMA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+  /@npmcli/package-json/3.0.0:
+    resolution: {integrity: sha512-NnuPuM97xfiCpbTEJYtEuKz6CFbpUHtaT0+5via5pQeI25omvQDFbp1GcGJ/c4zvL/WX0qbde6YiLgfZbWFgvg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dependencies:
-      json-parse-even-better-errors: 2.3.1
+      json-parse-even-better-errors: 3.0.0
     dev: true
 
   /@octokit/auth-token/2.5.0:
@@ -4565,6 +4565,11 @@ packages:
 
   /json-parse-even-better-errors/2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
+    dev: true
+
+  /json-parse-even-better-errors/3.0.0:
+    resolution: {integrity: sha512-iZbGHafX/59r39gPwVPRBGw0QQKnA7tte5pSMrhWOW7swGsVvVTjmfyAV9pNqk8YGT7tRCdxRu8uzcgZwoDooA==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dev: true
 
   /json-schema-traverse/0.4.1:
