@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.8.2
+
+### Patch Changes
+
+- 853e98f: fix: connection not closing when fetching version
+
 ## 0.8.1
 
 ### Patch Changes
