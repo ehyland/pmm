@@ -57,6 +57,7 @@ module.exports = (_, { mode = 'production' }) => {
       ...(IS_DEV
         ? {
             // development options
+            devtool: 'source-map',
           }
         : {
             // production options
