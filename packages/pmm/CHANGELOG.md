@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.9.0
+
+### Minor Changes
+
+- 8fb7d5d: Add update all command `pmm update-default all`
+
 ## 0.8.2
 
 ### Patch Changes
