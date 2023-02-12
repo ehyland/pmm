@@ -25,6 +25,8 @@ jest.setTimeout(ms('20 seconds'));
 const SPEC_RX =
   /(?<name>(pnpm|npm|yarn))@(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/;
 
+const VERSION_RX = /(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)/;
+
 beforeAll(async () => {
   await assertValidTestEnvironment();
   await resetBashRc();
@@ -198,6 +200,31 @@ describe('Install and usage', () => {
 
         expect(Number(match.groups?.major)).toBeGreaterThan(6);
       });
+    });
+  });
+
+  describe('pmm update-default', () => {
+    let testProject: TestProject;
+    let output: String;
+
+    beforeAll(async () => {
+      testProject = await setupTestProject({});
+      output = await human(`pmm update-default`, {
+        cwd: testProject.projectPath,
+      });
+    });
+
+    it('updates the default packageManagers', async () => {
+      expect(output).toMatch('🎁  Updating all package managers');
+      expect(output).toMatch(
+        new RegExp(`🎁  Setting pnpm default to version ${VERSION_RX.source}`)
+      );
+      expect(output).toMatch(
+        new RegExp(`🎁  Setting npm default to version ${VERSION_RX.source}`)
+      );
+      expect(output).toMatch(
+        new RegExp(`🎁  Setting yarn default to version ${VERSION_RX.source}`)
+      );
     });
   });
 

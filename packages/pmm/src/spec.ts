@@ -6,6 +6,18 @@ export function isSupportedPackageManager(
   return SUPPORTED_PACKAGE_MANAGERS.includes(input as any);
 }
 
+export function validateIsSupportedPackageManager(
+  input: string
+): asserts input is PackageManagerName {
+  if (!isSupportedPackageManager(input)) {
+    throw new Error(
+      `Unsupported package manager "${input}". pmm supports ${SUPPORTED_PACKAGE_MANAGERS.join(
+        ', '
+      )}`
+    );
+  }
+}
+
 export type PackageManagerSpec = {
   name: PackageManagerName;
   version: string;
@@ -32,13 +44,7 @@ export function parseVersionString(versionString: string) {
 export function parseSpecString(specString: string): PackageManagerSpec {
   const [packageManager, version] = specString.split('@');
 
-  if (!isSupportedPackageManager(packageManager)) {
-    throw new Error(
-      `Unsupported package manager "${packageManager}". pmm supports ${SUPPORTED_PACKAGE_MANAGERS.join(
-        ', '
-      )}`
-    );
-  }
+  validateIsSupportedPackageManager(packageManager);
 
   return { name: packageManager, version };
 }
