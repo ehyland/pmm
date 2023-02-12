@@ -9,6 +9,7 @@ import * as specLib from './spec';
 import packageHelper from '@npmcli/package-json';
 import pkg from '../package.json';
 import execa from 'execa';
+import { SUPPORTED_PACKAGE_MANAGERS } from './config';
 
 const cli = sade('pmm');
 cli.version(pkg.version);
@@ -71,25 +72,29 @@ cli
 
 cli
   .command(
-    'update-default <package-manager> [version]',
+    'update-default [package-manager] [version]',
     'Update the default package manager version'
   )
   .action(
-    handler(async (packageManagerName: string, requestedVersion?: string) => {
-      if (!specLib.isSupportedPackageManager(packageManagerName)) {
-        logger.userError(`Sorry, "${packageManagerName}" is not yet supported`);
+    handler(async (nameParam: string = 'all', versionParam?: string) => {
+      const toUpdate: specLib.PackageManagerSpec[] = [];
+
+      if (nameParam === 'all') {
+        logger.friendly(`Updating all package managers`);
+        for (const name of SUPPORTED_PACKAGE_MANAGERS) {
+          toUpdate.push(await registry.getLatestVersion(name));
+        }
+      } else if (!specLib.isSupportedPackageManager(nameParam)) {
+        logger.userError(`Sorry, "${nameParam}" is not yet supported`);
         process.exit(1);
+      } else {
+        toUpdate.push(await registry.getLatestVersion(nameParam));
       }
 
-      const version = requestedVersion
-        ? requestedVersion
-        : (await registry.getLatestVersion(packageManagerName)).version;
-
-      const spec = specLib.parseSpecString(`${packageManagerName}@${version}`);
-
-      await installer.install({ spec });
-
-      await global.updateDefault(spec);
+      for (const spec of toUpdate) {
+        await installer.install({ spec });
+        await global.updateDefault(spec);
+      }
     })
   );
 

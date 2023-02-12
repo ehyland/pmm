@@ -4,7 +4,7 @@ import * as nodeUtil from 'node:util';
 import * as logger from './logger';
 import * as config from './config';
 import * as http from './http';
-import { PackageManagerSpec } from './spec';
+import { PackageManagerSpec, validateIsSupportedPackageManager } from './spec';
 import { Packument } from '@npm/types';
 import * as filesystem from './filesystem';
 
@@ -32,7 +32,11 @@ export async function downloadPackage(spec: PackageManagerSpec) {
   );
 }
 
-export async function getLatestVersion(packageManagerName: string) {
+export async function getLatestVersion(
+  packageManagerName: string
+): Promise<PackageManagerSpec> {
+  validateIsSupportedPackageManager(packageManagerName);
+
   const packument = await http.json<Packument>(
     `${config.REGISTRY}/${packageManagerName}`
   );
@@ -44,6 +48,7 @@ export async function getLatestVersion(packageManagerName: string) {
   }
 
   return {
+    name: packageManagerName,
     version,
   };
 }
