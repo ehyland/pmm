@@ -15,6 +15,13 @@ export VERDACCIO_PORT="48733"
 
 BUILD_WATCH="${BUILD_WATCH:-}"
 EXTRA_JEST_ARGS=""
+TTY_ARGS=""
+
+if [ -t 1 ]; then
+  echo "Running in interactive mode"
+  TTY_ARGS="-it"
+fi
+
 
 docker-compose build
 
@@ -58,10 +65,10 @@ if [[ -n "$BUILD_WATCH" ]]; then
 
   EXTRA_JEST_ARGS+=" --watchAll"
 else
-  docker-compose run --rm -it builder ./scripts/docker/builder-entrypoint
+  docker-compose run --rm $TTY_ARGS builder ./scripts/docker/builder-entrypoint
 fi
 
-docker-compose run --rm -it tester \
+docker-compose run --rm $TTY_ARGS tester \
   pnpm jest \
     --runInBand \
     --verbose \
