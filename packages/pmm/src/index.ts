@@ -60,8 +60,10 @@ export async function runPackageManager(
 
   const [nodePath, _shimPath, ...argvRest] = process.argv;
 
-  spawnSync(nodePath, [executablePath, ...argvRest], {
+  const result = spawnSync(nodePath, [executablePath, ...argvRest], {
     stdio: 'inherit',
     env: { ...process.env, PMM_IGNORE_SPEC_MISS_MATCH: '1' },
   });
+
+  process.exit(result.status ?? 0);
 }

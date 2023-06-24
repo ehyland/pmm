@@ -10,7 +10,7 @@
 
 ## Setup
 
-Install [`docker`](https://docs.docker.com/get-docker/) & [`docker-compose`](https://docs.docker.com/compose/install/) >= v2 for running e2e tests.
+Install [`docker`](https://docs.docker.com/get-docker/) for running e2e tests.
 
 Install dependences
 
@@ -27,7 +27,7 @@ pnpm build
 # Create a development build in watch mode
 pnpm build:watch
 
-# Build and release to local registry in watch mode. (start a local registry with docker-compose up -d registry)
+# Build and release to local registry in watch mode. (start a local registry with docker compose up -d registry)
 pnpm build:watch:release
 ```
 

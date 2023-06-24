@@ -12,7 +12,5 @@ runs:
         node-version: 16
         cache: pnpm
 
-    - uses: ehyland/actions/install-docker-compose-v2@main
-
     - run: pnpm install
       shell: bash

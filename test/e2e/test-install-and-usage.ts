@@ -372,4 +372,26 @@ describe('Install and usage', () => {
       expect(result.stdout).toMatch(/\d+\.\d+\.\d+/);
     });
   });
+
+  describe('when a package manager exits with a non zero code', () => {
+    let result: execa.ExecaReturnValue<string>;
+
+    beforeAll(async () => {
+      const testProject = await setupTestProject({
+        packageManager: 'pnpm@7.5.1',
+        scripts: {
+          'script-with-exit-code': 'exit 1',
+        },
+      });
+
+      result = await shell(`pnpm run script-with-exit-code`, {
+        cwd: testProject.projectPath,
+        reject: false,
+      });
+    });
+
+    it('exits with same code', () => {
+      expect(result.exitCode).toEqual(1);
+    });
+  });
 });

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 function clean_up {
-  docker-compose down
+  docker compose down
 }
 trap clean_up EXIT
 
@@ -22,9 +22,9 @@ if [ -t 1 ]; then
 fi
 
 
-docker-compose build
+docker compose build
 
-docker-compose up -d registry
+docker compose up -d registry
 
 last_message=""
 function say_once {
@@ -64,10 +64,10 @@ if [[ -n "$BUILD_WATCH" ]]; then
 
   EXTRA_JEST_ARGS+=" --watchAll"
 else
-  docker-compose run --rm $TTY_ARGS builder ./scripts/docker/builder-entrypoint
+  docker compose run --rm $TTY_ARGS builder ./scripts/docker/builder-entrypoint
 fi
 
-docker-compose run --rm $TTY_ARGS tester \
+docker compose run --rm $TTY_ARGS tester \
   pnpm jest \
     --runInBand \
     --verbose \
