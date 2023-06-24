@@ -13,4 +13,4 @@ export const PMM_IGNORE_SPEC_MISS_MATCH = /(yes|true|1)/i.test(
   process.env.PMM_IGNORE_SPEC_MISS_MATCH ?? ''
 );
 
-export type PackageManagerName = typeof SUPPORTED_PACKAGE_MANAGERS[number];
+export type PackageManagerName = (typeof SUPPORTED_PACKAGE_MANAGERS)[number];
