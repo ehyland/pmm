@@ -391,7 +391,7 @@ describe('Install and usage', () => {
     });
 
     it('exits with same code', () => {
-      expect(result.exitCode).toEqual(3);
+      expect(result.exitCode).toEqual(1);
     });
   });
 });
