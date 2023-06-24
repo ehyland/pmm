@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.10.0
+
+### Minor Changes
+
+- 3849f61: Exit with correct code from package manager
+
 ## 0.9.0
 
 ### Minor Changes
