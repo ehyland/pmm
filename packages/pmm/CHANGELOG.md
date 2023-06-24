@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.10.1
+
+### Patch Changes
+
+- 22e667c: update deps
+
 ## 0.10.0
 
 ### Minor Changes
