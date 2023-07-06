@@ -14,6 +14,7 @@ services:
   builder:
     build:
       dockerfile: test/e2e/Dockerfile.builder
+      context: .
     network_mode: service:registry
     environment:
       - LOCAL_NPM_REGISTRY=http://localhost:48733/
@@ -24,6 +25,7 @@ services:
   tester:
     build:
       dockerfile: test/e2e/Dockerfile.tester
+      context: .
       args:
         - NODE_TEST_VERSION=${NODE_TEST_VERSION}
     network_mode: service:registry
