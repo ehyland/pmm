@@ -5,7 +5,7 @@ description: 'Sets up project dependencies'
 runs:
   using: 'composite'
   steps:
-    - uses: pnpm/action-setup@v2.3.0
+    - uses: pnpm/action-setup@v2.4.0
 
     - uses: actions/setup-node@v3
       with:
