@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.11.0
+
+### Minor Changes
+
+- 08c8f7a: drop node 16 support
+
 ## 0.10.1
 
 ### Patch Changes
