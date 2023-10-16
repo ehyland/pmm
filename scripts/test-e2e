@@ -8,7 +8,7 @@ function clean_up {
 trap clean_up EXIT
 
 # export for use in docker-compose.yml
-export NODE_TEST_VERSION="${NODE_TEST_VERSION:-16}"
+export NODE_TEST_VERSION="${NODE_TEST_VERSION:-20}"
 export VERDACCIO_UID=`id -u`
 export VERDACCIO_PORT="48733"
 
