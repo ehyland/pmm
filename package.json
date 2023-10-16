@@ -25,7 +25,7 @@
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
-    "@actions/github": "^5.1.1",
+    "@actions/github": "^6.0.0",
     "@babel/core": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
