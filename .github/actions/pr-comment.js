@@ -13,7 +13,7 @@ const COMMENT_HEADER = '### 🤖 PR Release Bot';
 /**
  * @param {Options} options
  */
-module.exports = async ({ github, context }) => {
+export default async ({ github, context }) => {
   /**
    * @type {Comment | undefined}
    */
