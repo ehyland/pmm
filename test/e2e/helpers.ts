@@ -7,7 +7,7 @@ export const HOME = os.homedir();
 export const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
 export const BASH_RC_LOAD_SCRIPT = `
 export PMM_DIR="$HOME/.pmm"
-export PMM_NPM_REGISTRY="http://localhost:48733"
+export PMM_NPM_REGISTRY="http://127.0.0.1:48733"
 [ -s "$PMM_DIR/package/enable.sh" ] && \. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
 `;
 

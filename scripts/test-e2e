@@ -43,7 +43,7 @@ if [[ -n "$BUILD_WATCH" ]]; then
   while true; do
 
     package_status=$(
-      curl -s -o /dev/null -w "%{http_code}" http://localhost:48733/@ehyland/pmm/latest || true
+      curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:48733/@ehyland/pmm/latest || true
     )
 
     if [[ "$package_status" == "000" ]]; then 
