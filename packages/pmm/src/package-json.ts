@@ -14,7 +14,6 @@ export async function writePackageJson(
   pkg: PackageJson
 ): Promise<void> {
   const content = JSON.stringify(pkg);
-  console.log(`writing ${content}`);
   await fs.writeFile(packageJsonPath, content, { encoding: 'utf8' });
 }
 

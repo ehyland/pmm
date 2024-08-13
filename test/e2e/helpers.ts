@@ -125,6 +125,5 @@ export async function callAndCatch(fn: (...args: any[]) => Promise<any>) {
 
 export async function loadPackageJson(packagePath: string) {
   const content = await fs.readFile(packagePath, 'utf8');
-  console.log(content);
   return JSON.parse(content);
 }

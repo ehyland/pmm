@@ -184,13 +184,13 @@ describe('Install and usage', () => {
           subDir: 'configured',
           packageManager: 'npm@6.0.0',
         });
-        console.log(testProject.packageFilePath);
+
         await human(`pmm update-local`, {
           cwd: testProject.projectPath,
         });
       });
 
-      it.only('update the packageManager field', async () => {
+      it('update the packageManager field', async () => {
         const { packageManager } = await loadPackageJson(
           testProject.packageFilePath
         );
@@ -290,7 +290,7 @@ describe('Install and usage', () => {
 
     beforeAll(async () => {
       testProject = await setupTestProject({
-        packageManager: 'yarn@3.2.1',
+        packageManager: 'yarn@1.22.22',
       });
       await human(`yarn set version 3.2.1`, {
         cwd: testProject.projectPath,
