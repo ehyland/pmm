@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.12.1
+
+### Patch Changes
+
+- 7469eb9: Fix package.json formatting
+
 ## 0.12.0
 
 ### Minor Changes
