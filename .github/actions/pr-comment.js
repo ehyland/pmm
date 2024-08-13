@@ -13,7 +13,7 @@ const COMMENT_HEADER = '### 🤖 PR Release Bot';
 /**
  * @param {Options} options
  */
-export default async ({ github, context }) => {
+export async function run({ github, context }) {
   /**
    * @type {Comment | undefined}
    */
@@ -50,7 +50,7 @@ export default async ({ github, context }) => {
       body: createCommentBody({ context, github }),
     });
   }
-};
+}
 
 /**
  * @param {Options} options
