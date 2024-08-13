@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.12.0
+
+### Minor Changes
+
+- 64924fa: move to esm source (still output as commonjs)
+
 ## 0.11.0
 
 ### Minor Changes
