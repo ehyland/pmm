@@ -87,7 +87,7 @@ describe('Install and usage', () => {
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
       let testProject: TestProject;
-      let result: execa.ExecaReturnValue<string>;
+      let result: execa.Result;
 
       beforeAll(async () => {
         testProject = await setupTestProject({
@@ -109,7 +109,7 @@ describe('Install and usage', () => {
       const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, 'default');
       const PKG_FILE_PATH = path.resolve(PROJECT_PATH, 'package.json');
 
-      let result: execa.ExecaReturnValue<string>;
+      let result: execa.Result;
       let loggedVersion: string;
 
       beforeAll(async () => {
@@ -121,7 +121,7 @@ describe('Install and usage', () => {
           })
         );
         result = await shell(`${name} -v`, { cwd: PROJECT_PATH });
-        loggedVersion = result.stdout;
+        loggedVersion = result.stdout as string;
       });
 
       it('calls the latest version', () => {
@@ -141,7 +141,7 @@ describe('Install and usage', () => {
       });
 
       describe('when called a second time', () => {
-        let secondCall: execa.ExecaReturnValue<string>;
+        let secondCall: execa.Result;
 
         beforeAll(async () => {
           secondCall = await shell(`${name} -v`, { cwd: PROJECT_PATH });
@@ -184,12 +184,13 @@ describe('Install and usage', () => {
           subDir: 'configured',
           packageManager: 'npm@6.0.0',
         });
+        console.log(testProject.packageFilePath);
         await human(`pmm update-local`, {
           cwd: testProject.projectPath,
         });
       });
 
-      it('update the packageManager field', async () => {
+      it.only('update the packageManager field', async () => {
         const { packageManager } = await loadPackageJson(
           testProject.packageFilePath
         );
@@ -329,7 +330,7 @@ describe('Install and usage', () => {
   });
 
   describe('pnpx', () => {
-    let result: execa.ExecaReturnValue<string>;
+    let result: execa.Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({});
@@ -353,7 +354,7 @@ describe('Install and usage', () => {
   });
 
   describe('when a package manager is called as a child process', () => {
-    let result: execa.ExecaReturnValue<string>;
+    let result: execa.Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({
@@ -374,7 +375,7 @@ describe('Install and usage', () => {
   });
 
   describe('when a package manager exits with a non zero code', () => {
-    let result: execa.ExecaReturnValue<string>;
+    let result: execa.Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({

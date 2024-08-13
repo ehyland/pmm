@@ -6,13 +6,15 @@ import * as installer from './installer';
 import * as registry from './registry';
 import * as inspector from './inspector';
 import * as specLib from './spec';
-import packageHelper from '@npmcli/package-json';
+import * as packageJsonUtil from './package-json';
 import pkg from '../package.json';
-import execa from 'execa';
+import { execa } from 'execa';
 import { SUPPORTED_PACKAGE_MANAGERS } from './config';
 
 const cli = sade('pmm');
 cli.version(pkg.version);
+
+const $ = execa({ shell: '/bin/bash', stdio: 'inherit' });
 
 function handler(cb: sade.Handler): sade.Handler {
   return async (...args: any[]) => {
@@ -49,20 +51,15 @@ cli
       }
 
       await installer.install({
-        spec: { name: search.spec.name, version: latest.version },
+        spec: latest,
       });
 
       logger.info(search.packageJSONPath);
 
-      const pkg = await packageHelper.load(
-        path.dirname(search.packageJSONPath)
+      await packageJsonUtil.updateSpecInPackageJson(
+        search.packageJSONPath,
+        latest
       );
-
-      pkg.update({
-        packageManager: `${search.spec.name}@${latest.version}`,
-      });
-
-      await pkg.save();
 
       logger.friendly(`Updated registry!`);
       logger.info(`  From: ${search.spec.name}@${search.spec.version}`);
@@ -100,10 +97,7 @@ cli
 
 cli.command('update-self', 'Update pmm itself').action(
   handler(async () => {
-    await execa.command(
-      `curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash`,
-      { shell: '/bin/bash', stdio: 'inherit' }
-    );
+    await $`curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash`;
   })
 );
 
@@ -136,13 +130,10 @@ cli
 
       const latest = await registry.getLatestVersion(packageManagerName);
 
-      const pkg = await packageHelper.load(packageDir);
-
-      pkg.update({
-        packageManager: `${packageManagerName}@${latest.version}`,
-      });
-
-      await pkg.save();
+      await packageJsonUtil.updateSpecInPackageJson(
+        path.resolve(packageDir, 'package.json'),
+        latest
+      );
 
       logger.friendly(`Pinned ${packageManagerName}@${latest.version}`);
     })

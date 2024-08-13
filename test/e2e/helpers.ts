@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import execa from 'execa';
+import { execa, Options as ExecaOptions } from 'execa';
 
 export const HOME = os.homedir();
 export const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
@@ -44,14 +44,14 @@ export async function setupTestProject({
 
 export async function human(
   shellCmd: string,
-  { log = false, cwd = process.cwd() } = {}
+  { log = true, cwd = process.cwd() } = {}
 ) {
-  const cmd = execa.command(`source ${BASH_RC_FILE} || true && ${shellCmd}`, {
+  const cmd = execa({
     all: true,
     shell: '/bin/bash',
     cwd: cwd,
     env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
-  });
+  })`source ${BASH_RC_FILE} || true && ${shellCmd}`;
 
   if (log) {
     cmd.all?.on('data', (data) => process.stderr.write(data));
@@ -61,15 +61,12 @@ export async function human(
   return result.all!;
 }
 
-export async function shell(shellCmd: string, options?: execa.Options<string>) {
-  const result = await execa.command(
-    `source ${BASH_RC_FILE} || true && ${shellCmd}`,
-    {
-      shell: '/bin/bash',
-      env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
-      ...options,
-    }
-  );
+export async function shell(shellCmd: string, options?: ExecaOptions) {
+  const result = await execa({
+    shell: '/bin/bash',
+    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
+    ...options,
+  })`source ${BASH_RC_FILE} || true && ${shellCmd}`;
 
   return result;
 }
@@ -127,5 +124,7 @@ export async function callAndCatch(fn: (...args: any[]) => Promise<any>) {
 }
 
 export async function loadPackageJson(packagePath: string) {
-  return JSON.parse(await fs.readFile(packagePath, 'utf8'));
+  const content = await fs.readFile(packagePath, 'utf8');
+  console.log(content);
+  return JSON.parse(content);
 }
