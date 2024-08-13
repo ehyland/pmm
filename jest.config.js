@@ -1,9 +1,12 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
-module.exports = {
+/** @type {import('jest').Config} */
+export default {
   rootDir: '.',
   testMatch: ['<rootDir>/packages/**/*.test.(ts|tsx)'],
   testEnvironment: 'node',
   clearMocks: true,
+  transform: {
+    '\\.[jt]sx?$': 'babel-jest',
+  },
   transformIgnorePatterns: [],
   watchPlugins: [
     'jest-watch-typeahead/filename',

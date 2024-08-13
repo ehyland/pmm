@@ -18,7 +18,7 @@ export async function install({
 }: InstallOptions): Promise<InstallResult> {
   logger.debug(`Installing ${spec.name}@${spec.version}`);
 
-  let pkg = await filesystem.readPackageFromCache(spec);
+  let pkg = await filesystem.readPackageManagerPackageFromCache(spec);
 
   if (pkg && !skipCache) {
     logger.debug(`Skipping install as found in cache`);
@@ -32,7 +32,9 @@ export async function install({
 
   await registry.downloadPackage(spec);
 
-  pkg = await filesystem.readPackageFromCache(spec, { throwOnMissing: true });
+  pkg = await filesystem.readPackageManagerPackageFromCache(spec, {
+    throwOnMissing: true,
+  });
 
   return {
     usedCache: false,

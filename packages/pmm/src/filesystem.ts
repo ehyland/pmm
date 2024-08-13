@@ -1,14 +1,14 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import { PackageJson } from '@npm/types';
 import * as specLib from './spec';
 import { PMM_DIR } from './config';
+import { PackageJson } from './package-json';
 
 export function getInstallPath({ name, version }: specLib.PackageManagerSpec) {
   return path.resolve(PMM_DIR, `./installed-versions/${name}-${version}`);
 }
 
-export function getInstallPackagePath(spec: specLib.PackageManagerSpec) {
+export function getInstallPackageJSONPath(spec: specLib.PackageManagerSpec) {
   return path.resolve(getInstallPath(spec), 'package.json');
 }
 
@@ -20,7 +20,9 @@ export async function getExecutablePath({
   executableName: string;
 }) {
   const installPath = getInstallPath(spec);
-  const pkg = await readPackageFromCache(spec, { throwOnMissing: true });
+  const pkg = await readPackageManagerPackageFromCache(spec, {
+    throwOnMissing: true,
+  });
   const relativeExecutablePath = pkg.bin?.[executableName];
 
   if (!relativeExecutablePath) {
@@ -32,16 +34,16 @@ export async function getExecutablePath({
 
 const pkgCache = new Map<string, PackageJson>();
 
-export async function readPackageFromCache(
+export async function readPackageManagerPackageFromCache(
   spec: specLib.PackageManagerSpec,
   opts: { throwOnMissing: true }
 ): Promise<PackageJson>;
 
-export async function readPackageFromCache(
+export async function readPackageManagerPackageFromCache(
   spec: specLib.PackageManagerSpec
 ): Promise<PackageJson | undefined>;
 
-export async function readPackageFromCache(
+export async function readPackageManagerPackageFromCache(
   spec: specLib.PackageManagerSpec,
   { throwOnMissing = false } = {}
 ) {
@@ -51,7 +53,7 @@ export async function readPackageFromCache(
   if (cached) return cached;
 
   const content = await fs
-    .readFile(getInstallPackagePath(spec), 'utf8')
+    .readFile(getInstallPackageJSONPath(spec), 'utf8')
     .catch((e) => undefined);
 
   if (!content) {

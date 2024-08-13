@@ -29,7 +29,7 @@ describe('installer', () => {
   beforeEach(() => {
     cachedPkg = undefined;
     jest.resetAllMocks();
-    mocked(filesystem).readPackageFromCache.mockImplementation(
+    mocked(filesystem).readPackageManagerPackageFromCache.mockImplementation(
       async (_spec: any, { throwOnMissing = false } = {}) => {
         if (!cachedPkg && throwOnMissing) throw missingPackageError;
         return cachedPkg;
@@ -72,7 +72,9 @@ describe('installer', () => {
       });
 
       it('validates that package exists', () => {
-        expect(filesystem.readPackageFromCache).toHaveBeenCalledWith(spec, {
+        expect(
+          filesystem.readPackageManagerPackageFromCache
+        ).toHaveBeenCalledWith(spec, {
           throwOnMissing: true,
         });
       });

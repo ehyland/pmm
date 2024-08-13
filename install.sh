@@ -4,6 +4,8 @@ set -euo pipefail
 
 echo "Installing pmm"
 
+INSTALL_TAG="${1:-latest}"
+
 PMM_DIR="$HOME/.pmm"
 PMM_PACKAGE_PATH="$PMM_DIR/package"
 
@@ -32,8 +34,8 @@ extract_package_from_manifest_script="
     .on('data', (chunk) => dataString+=chunk )
     .on('end', () => {
       const manifest = JSON.parse(dataString);
-      const latest = manifest['dist-tags']['latest'];
-      const pkg = manifest['versions'][latest];
+      const version = manifest['dist-tags']['$INSTALL_TAG'];
+      const pkg = manifest['versions'][version];
       console.log(JSON.stringify(pkg));
     })
 "

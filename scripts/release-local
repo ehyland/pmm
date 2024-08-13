@@ -8,7 +8,7 @@ if [[ -z "${IS_CHILD_PROCESS:-}" ]]; then
   exit 0
 fi
 
-LOCAL_NPM_REGISTRY="${LOCAL_NPM_REGISTRY:-"http://localhost:48733/"}"
+LOCAL_NPM_REGISTRY="${LOCAL_NPM_REGISTRY:-"http://127.0.0.1:48733/"}"
 
 # get initial version
 package_name=`cat ./package.json | jq -r .name`

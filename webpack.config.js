@@ -1,6 +1,8 @@
-const webpack = require(`webpack`);
-const path = require('node:path');
-const execa = require('execa');
+import webpack from 'webpack';
+import { $ } from 'execa';
+import { resolve as _resolve } from 'node:path';
+
+const { BannerPlugin } = webpack;
 
 const packages = [
   [
@@ -26,15 +28,13 @@ class PublishLocalPlugin {
     compiler.hooks.done.tapPromise(
       'PublishLocalPlugin',
       async (compilation) => {
-        await execa
-          .command(path.resolve(`./scripts/release-local`), {
-            stdio: 'inherit',
-            cwd: compiler.options.context,
-            env: {
-              IS_CHILD_PROCESS: '1',
-            },
-          })
-          .catch((e) => console.error(e));
+        await $({
+          stdio: 'inherit',
+          cwd: compiler.options.context,
+          env: {
+            IS_CHILD_PROCESS: '1',
+          },
+        })`./scripts/release-local`.catch((e) => console.error(e));
 
         return undefined;
       }
@@ -42,13 +42,13 @@ class PublishLocalPlugin {
   }
 }
 
-module.exports = (_, { mode = 'production' }) => {
+export default (_, { mode = 'production' }) => {
   const IS_DEV = mode !== 'production';
   const BUILD_WATCH_RELEASE = !!process.env.BUILD_WATCH_RELEASE;
 
   /** @type {import("webpack").Configuration[]} */
   return packages.map(([pkgName, entry]) => {
-    const pkgPath = path.resolve(`packages/${pkgName}`);
+    const pkgPath = _resolve(`packages/${pkgName}`);
 
     return {
       mode: mode,
@@ -65,7 +65,7 @@ module.exports = (_, { mode = 'production' }) => {
           }),
       entry: entry,
       output: {
-        path: path.resolve(pkgPath, 'dist'),
+        path: _resolve(pkgPath, 'dist'),
         libraryTarget: `commonjs`,
         clean: true,
       },
@@ -89,7 +89,7 @@ module.exports = (_, { mode = 'production' }) => {
         concatenateModules: false,
       },
       plugins: [
-        new webpack.BannerPlugin({
+        new BannerPlugin({
           entryOnly: true,
           banner: `#!/usr/bin/env node\n/* eslint-disable */`,
           raw: true,
