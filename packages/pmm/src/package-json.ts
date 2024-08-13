@@ -13,7 +13,7 @@ export async function writePackageJson(
   packageJsonPath: string,
   pkg: PackageJson
 ): Promise<void> {
-  const content = JSON.stringify(pkg);
+  const content = JSON.stringify(pkg, null, '  ') + '\n';
   await fs.writeFile(packageJsonPath, content, { encoding: 'utf8' });
 }
 
