@@ -59,6 +59,11 @@ const createCommentBody = ({ context }) => `${COMMENT_HEADER}
 
 Packages in this PR have been release with tag \`pr-${context.issue.number}\`
 
+${codeFence}
+# install with
+curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash -s -- pr-${context.issue.number}
+${codeFence}
+
 Last published change => [\`${process.env.GITHUB_PR_COMMIT_SHA.slice(
   0,
   7
@@ -66,3 +71,5 @@ Last published change => [\`${process.env.GITHUB_PR_COMMIT_SHA.slice(
   context.issue.number
 }/commits/${process.env.GITHUB_PR_COMMIT_SHA})
 `;
+
+const codeFence = '```';
