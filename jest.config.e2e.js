@@ -1,4 +1,4 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('jest').Config} */
 export default {
   rootDir: '.',
   testMatch: ['<rootDir>/test/e2e/test-*.(ts|tsx)'],
