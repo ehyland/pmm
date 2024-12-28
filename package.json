@@ -1,7 +1,7 @@
 {
   "name": "@ehyland/pmm-monorepo",
   "description": "my take on corepack",
-  "packageManager": "pnpm@9.15.1",
+  "packageManager": "pnpm@9.15.2",
   "type": "module",
   "scripts": {
     "build": "webpack",
