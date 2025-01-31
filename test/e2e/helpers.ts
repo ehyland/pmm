@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { execa, Options as ExecaOptions } from 'execa';
+import exec, { Result } from 'nanoexec';
 
 export const HOME = os.homedir();
 export const BASH_RC_FILE = path.resolve(HOME, `.bashrc`);
@@ -46,27 +46,55 @@ export async function human(
   shellCmd: string,
   { log = true, cwd = process.cwd() } = {}
 ) {
-  const cmd = execa({
-    all: true,
+  const cmd = exec(`source ${BASH_RC_FILE} || true && ${shellCmd}`, {
     shell: '/bin/bash',
     cwd: cwd,
-    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
-  })`source ${BASH_RC_FILE} || true && ${shellCmd}`;
+    env: { ...process.env, PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
+  });
+
+  const { stdout, stderr } = cmd.process;
+
+  if (stdout && stderr) stdout.wrap(stderr);
 
   if (log) {
-    cmd.all?.on('data', (data) => process.stderr.write(data));
+    stdout?.on('data', (data) => process.stderr.write(data));
   }
 
   const result = await cmd;
-  return result.all!;
+
+  if (!result.ok) {
+    throw new ShellError(shellCmd, cwd, result);
+  }
+
+  return result.stdout.toString('utf8');
 }
 
-export async function shell(shellCmd: string, options?: ExecaOptions) {
-  const result = await execa({
+export class ShellError extends Error {
+  result: Result;
+  constructor(shellCmd: string, cwd: string, result: Result) {
+    super(
+      `Error running shell command\n cmd: ${shellCmd}\n cwd: ${cwd} output: ${result.stdout.toString('utf8')}`
+    );
+    this.result = result;
+  }
+}
+
+export async function shell(
+  shellCmd: string,
+  options: { cwd: string; reject?: boolean }
+) {
+  const { cwd, reject = true } = options;
+  const child = exec(`source ${BASH_RC_FILE} || true && ${shellCmd}`, {
     shell: '/bin/bash',
-    env: { PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
-    ...options,
-  })`source ${BASH_RC_FILE} || true && ${shellCmd}`;
+    env: { ...process.env, PATH: `${PMM_BIN_PATH}:${process.env.PATH}` },
+    cwd: cwd,
+  });
+
+  const result = await child;
+
+  if (reject && !result.ok) {
+    throw new ShellError(shellCmd, cwd, result);
+  }
 
   return result;
 }

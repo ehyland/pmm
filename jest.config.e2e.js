@@ -1,3 +1,7 @@
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 /** @type {import('jest').Config} */
 export default {
   rootDir: '.',
@@ -7,4 +11,5 @@ export default {
     '\\.[jt]sx?$': 'babel-jest',
   },
   transformIgnorePatterns: [],
+  prettierPath: require.resolve('prettier-2'),
 };

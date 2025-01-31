@@ -1,3 +1,7 @@
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 /** @type {import('jest').Config} */
 export default {
   rootDir: '.',
@@ -12,4 +16,5 @@ export default {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
+  prettierPath: require.resolve('prettier-2'),
 };

@@ -1,5 +1,5 @@
 import webpack from 'webpack';
-import { $ } from 'execa';
+import $ from 'nanoexec';
 import { resolve as _resolve } from 'node:path';
 
 const { BannerPlugin } = webpack;
@@ -28,13 +28,12 @@ class PublishLocalPlugin {
     compiler.hooks.done.tapPromise(
       'PublishLocalPlugin',
       async (compilation) => {
-        await $({
+        await $('./scripts/release-local', {
+          shell: true,
           stdio: 'inherit',
           cwd: compiler.options.context,
-          env: {
-            IS_CHILD_PROCESS: '1',
-          },
-        })`./scripts/release-local`.catch((e) => console.error(e));
+          env: { IS_CHILD_PROCESS: '1' },
+        }).then((r) => r, console.error);
 
         return undefined;
       }
