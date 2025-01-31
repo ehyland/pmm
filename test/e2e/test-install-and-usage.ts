@@ -1,8 +1,8 @@
-import execa from 'execa';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { escapeRegExp } from 'lodash';
 import ms from 'ms';
+import { stripVTControlCharacters } from 'node:util';
 
 import {
   PMM_BIN_PATH,
@@ -18,7 +18,9 @@ import {
   installPmm,
   callAndCatch,
   loadPackageJson,
+  ShellError,
 } from './helpers';
+import { Result } from 'nanoexec';
 
 jest.setTimeout(ms('20 seconds'));
 
@@ -52,7 +54,8 @@ describe('Install and usage', () => {
       Add the following to your ~/.bashrc
         export PMM_DIR="$HOME/.pmm"
         export PMM_NPM_REGISTRY="http://127.0.0.1:48733"
-        [ -s "$PMM_DIR/package/enable.sh" ] && \\. "$PMM_DIR/package/enable.sh"  # This loads pmm shims"
+        [ -s "$PMM_DIR/package/enable.sh" ] && \\. "$PMM_DIR/package/enable.sh"  # This loads pmm shims
+      "
     `);
   });
 
@@ -73,7 +76,7 @@ describe('Install and usage', () => {
   });
 
   it('pmm is in path', async () => {
-    expect(await human(`which pmm`)).toEqual(`${PMM_BIN_PATH}/pmm`);
+    expect((await human(`which pmm`)).trim()).toEqual(`${PMM_BIN_PATH}/pmm`);
   });
 
   describe.each([
@@ -87,7 +90,7 @@ describe('Install and usage', () => {
     'in path of a project with "packageManager": "$name@$version"',
     ({ name, version }) => {
       let testProject: TestProject;
-      let result: execa.Result;
+      let result: Result;
 
       beforeAll(async () => {
         testProject = await setupTestProject({
@@ -98,7 +101,7 @@ describe('Install and usage', () => {
       });
 
       it('uses configured package manager', async () => {
-        expect(result.stdout).toEqual(version);
+        expect(result.stdout.toString('utf8').trim()).toEqual(version);
       });
     }
   );
@@ -109,7 +112,7 @@ describe('Install and usage', () => {
       const PROJECT_PATH = path.resolve(WORKSPACE_PATH, name, 'default');
       const PKG_FILE_PATH = path.resolve(PROJECT_PATH, 'package.json');
 
-      let result: execa.Result;
+      let result: Result;
       let loggedVersion: string;
 
       beforeAll(async () => {
@@ -121,7 +124,7 @@ describe('Install and usage', () => {
           })
         );
         result = await shell(`${name} -v`, { cwd: PROJECT_PATH });
-        loggedVersion = result.stdout as string;
+        loggedVersion = result.stdout.toString('utf8').trim();
       });
 
       it('calls the latest version', () => {
@@ -129,27 +132,29 @@ describe('Install and usage', () => {
       });
 
       it('installs the latest version', () => {
-        expect(result.stderr).toMatch(
+        expect(result.stderr.toString('utf8').trim()).toMatch(
           `🎁  Installing ${name}@${loggedVersion}`
         );
       });
 
       it('sets it as the as the default', async () => {
-        expect(result.stderr).toMatch(
+        expect(result.stderr.toString('utf8').trim()).toMatch(
           `🎁  Setting ${name} default to version ${loggedVersion}`
         );
       });
 
       describe('when called a second time', () => {
-        let secondCall: execa.Result;
+        let secondCall: Result;
 
         beforeAll(async () => {
           secondCall = await shell(`${name} -v`, { cwd: PROJECT_PATH });
         });
 
         it('remembers the default', () => {
-          expect(secondCall.stderr).toBe('');
-          expect(secondCall.stdout).toBe(loggedVersion);
+          expect(secondCall.stderr.toString('utf8')).toBe('');
+          expect(
+            stripVTControlCharacters(secondCall.stdout.toString('utf8').trim())
+          ).toBe(loggedVersion);
         });
       });
     }
@@ -158,7 +163,7 @@ describe('Install and usage', () => {
   describe('pmm update-local', () => {
     describe('when called in a directory without pm spec', () => {
       let testProject: TestProject;
-      let error: execa.ExecaError;
+      let error: ShellError;
 
       beforeAll(async () => {
         testProject = await setupTestProject({ subDir: 'not-configured' });
@@ -170,9 +175,9 @@ describe('Install and usage', () => {
       });
 
       it('exits with error', () => {
-        expect(error.all).toBe(
-          `⚠️  Unable to find package.json with "packageManager" field`
-        );
+        expect(
+          stripVTControlCharacters(error.result.stdout.toString('utf8').trim())
+        ).toBe(`⚠️  Unable to find package.json with "packageManager" field`);
       });
     });
 
@@ -265,7 +270,7 @@ describe('Install and usage', () => {
 
     describe('when called in a directory without package', () => {
       let testProject: TestProject;
-      let error: execa.ExecaError;
+      let error: ShellError;
 
       beforeAll(async () => {
         testProject = await setupTestProject({ subDir: 'not-configured' });
@@ -277,8 +282,10 @@ describe('Install and usage', () => {
       });
 
       it('exits with error', () => {
-        expect(error.all).toBe(
-          `⚠️  Sorry, "package.json" not found in ./some-random-subpath`
+        expect(
+          stripVTControlCharacters(error.result.stdout.toString('utf8').trim())
+        ).toMatchInlineSnapshot(
+          `"⚠️  Sorry, "package.json" not found in ./some-random-subpath"`
         );
       });
     });
@@ -301,7 +308,7 @@ describe('Install and usage', () => {
     });
 
     it('prints yarn berry version', () => {
-      expect(result).toBe('3.2.1');
+      expect(result.trim()).toBe('3.2.1');
     });
   });
 
@@ -324,13 +331,14 @@ describe('Install and usage', () => {
                  \\  (oo)\\_______
                     (__)\\       )\\/\\
                         ||----w |
-                        ||     ||"
+                        ||     ||
+        "
       `);
     });
   });
 
   describe('pnpx', () => {
-    let result: execa.Result;
+    let result: Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({});
@@ -340,8 +348,8 @@ describe('Install and usage', () => {
     });
 
     it('runs the cowsay cli', () => {
-      expect(result.stdout).toMatchInlineSnapshot(`
-        " _________________
+      expect(result.stdout.toString('utf8').trim()).toMatchInlineSnapshot(`
+        "_________________
         < Yeah not bad m8 >
          -----------------
                 \\   ^__^
@@ -354,7 +362,7 @@ describe('Install and usage', () => {
   });
 
   describe('when a package manager is called as a child process', () => {
-    let result: execa.Result;
+    let result: Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({
@@ -370,12 +378,12 @@ describe('Install and usage', () => {
     });
 
     it('allows npm to be called', () => {
-      expect(result.stdout).toMatch(/\d+\.\d+\.\d+/);
+      expect(result.stdout.toString('utf8').trim()).toMatch(/\d+\.\d+\.\d+/);
     });
   });
 
   describe('when a package manager exits with a non zero code', () => {
-    let result: execa.Result;
+    let result: Result;
 
     beforeAll(async () => {
       const testProject = await setupTestProject({
@@ -392,7 +400,7 @@ describe('Install and usage', () => {
     });
 
     it('exits with same code', () => {
-      expect(result.exitCode).toEqual(1);
+      expect(result.code).toEqual(1);
     });
   });
 });

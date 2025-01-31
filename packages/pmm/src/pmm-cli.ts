@@ -8,13 +8,15 @@ import * as inspector from './inspector';
 import * as specLib from './spec';
 import * as packageJsonUtil from './package-json';
 import pkg from '../package.json';
-import { execa } from 'execa';
+import exec from 'nanoexec';
 import { SUPPORTED_PACKAGE_MANAGERS } from './config';
 
 const cli = sade('pmm');
 cli.version(pkg.version);
 
-const $ = execa({ shell: '/bin/bash', stdio: 'inherit' });
+const $ = async (command: string) => {
+  return await exec(command, { shell: '/bin/bash', stdio: 'inherit' });
+};
 
 function handler(cb: sade.Handler): sade.Handler {
   return async (...args: any[]) => {
@@ -97,7 +99,9 @@ cli
 
 cli.command('update-self', 'Update pmm itself').action(
   handler(async () => {
-    await $`curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash`;
+    await $(
+      'curl -o- https://raw.githubusercontent.com/ehyland/pmm/main/install.sh | bash'
+    );
   })
 );
 
