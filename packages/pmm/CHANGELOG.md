@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.13.0
+
+### Minor Changes
+
+- 208f9ff: replace execa with nanoexec
+
 ## 0.12.1
 
 ### Patch Changes
