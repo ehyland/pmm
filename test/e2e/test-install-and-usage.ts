@@ -316,7 +316,17 @@ describe('Install and usage', () => {
     let result: string;
 
     beforeAll(async () => {
-      const testProject = await setupTestProject({});
+      let testProject = await setupTestProject({});
+
+      if (process.version.startsWith('v18.')) {
+        testProject = await setupTestProject({
+          packageManager: 'npm@10.9.2', // npm@11 does not support node 18
+        });
+        await human(`npm --version`, {
+          cwd: testProject.projectPath,
+        });
+      }
+
       result = await human(`npx -y cowsay@1.5.0 How good is pmm!`, {
         cwd: testProject.projectPath,
       });
