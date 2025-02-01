@@ -1,5 +1,11 @@
 # @ehyland/pmm
 
+## 0.13.1
+
+### Patch Changes
+
+- 6b2fb58: Switch from webpack to rspack
+
 ## 0.13.0
 
 ### Minor Changes
