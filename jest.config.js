@@ -9,7 +9,7 @@ export default {
   testEnvironment: 'node',
   clearMocks: true,
   transform: {
-    '\\.[jt]sx?$': 'babel-jest',
+    '^.+\\.(t|j)sx?$': '@swc/jest',
   },
   transformIgnorePatterns: [],
   watchPlugins: [

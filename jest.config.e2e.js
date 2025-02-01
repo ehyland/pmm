@@ -8,7 +8,7 @@ export default {
   testMatch: ['<rootDir>/test/e2e/test-*.(ts|tsx)'],
   testEnvironment: 'node',
   transform: {
-    '\\.[jt]sx?$': 'babel-jest',
+    '^.+\\.(t|j)sx?$': '@swc/jest',
   },
   transformIgnorePatterns: [],
   prettierPath: require.resolve('prettier-2'),
