@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
+require('../dist/v8-compile-cache');
 require('../dist/pmm').runPackageManager('pnpm');
