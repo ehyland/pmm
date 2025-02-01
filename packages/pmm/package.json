@@ -1,6 +1,6 @@
 {
   "name": "@ehyland/pmm",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "my take on corepack",
   "files": [
     "dist",
