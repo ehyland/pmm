@@ -63,8 +63,8 @@ importers:
         specifier: ^3.4.2
         version: 3.4.2
       prettier-2:
-        specifier: npm:prettier@^2
-        version: prettier@2.8.8
+        specifier: npm:prettier@^3.0.0
+        version: prettier@3.4.2
       swc-loader:
         specifier: ^0.2.6
         version: 0.2.6(@swc/core@1.10.12)(webpack@5.97.1(@swc/core@1.10.12))
