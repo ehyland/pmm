@@ -21,7 +21,10 @@ if [ -t 1 ]; then
   TTY_ARGS="-it"
 fi
 
+# Clear previous builds
+rm -rf test/e2e/verdaccio/storage/data/@ehyland/pmm || true
 
+docker compose pull
 docker compose build
 
 docker compose up -d registry
