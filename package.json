@@ -25,7 +25,7 @@
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
-    "@actions/github": "^6.0.0",
+    "@actions/github": "^7.0.0",
     "@changesets/cli": "^2.27.12",
     "@octokit/rest": "^21.1.0",
     "@preconstruct/cli": "^2.8.10",
