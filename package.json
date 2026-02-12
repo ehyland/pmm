@@ -1,7 +1,7 @@
 {
   "name": "@ehyland/pmm-monorepo",
   "description": "my take on corepack",
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@10.29.3",
   "type": "module",
   "scripts": {
     "build": "rspack",
