@@ -1,7 +1,7 @@
 services:
   # Local NPM registry
   registry:
-    image: ehyland/verdaccio-test:6.2.5
+    image: ehyland/verdaccio-test:6.2.7
     environment:
       - VERDACCIO_UID
       - VERDACCIO_PORT
