@@ -10,7 +10,7 @@
   "author": "Eamon Hyland",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^22.12.0",
+    "@types/node": "^24.0.0",
     "@types/tar": "^6.1.13",
     "debug": "^4.4.0",
     "kleur": "^4.1.5",
