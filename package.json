@@ -27,7 +27,7 @@
   "devDependencies": {
     "@actions/github": "^6.0.0",
     "@changesets/cli": "^2.27.12",
-    "@octokit/rest": "^21.1.0",
+    "@octokit/rest": "^22.0.0",
     "@preconstruct/cli": "^2.8.10",
     "@rspack/cli": "^1.2.2",
     "@rspack/core": "^1.2.2",
